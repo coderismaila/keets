@@ -1,5 +1,5 @@
 <template>
-  <div>Dashboard: {{ $auth.loggedIn }}</div>
+  <div>Dashboard: {{ $auth.user }}</div>
 </template>
 <script>
 export default {

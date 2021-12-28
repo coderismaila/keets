@@ -6,6 +6,9 @@
           <v-card-title class="headline justify-center"
             >Create an Account</v-card-title
           >
+          <v-alert v-if="error" type="error" dismissible>
+            {{ error_message }}
+          </v-alert>
           <v-form ref="form" v-model="valid" lazy-validation class="mt-8">
             <v-text-field
               v-model="formData.username"
@@ -34,11 +37,11 @@
               v-model="formData.password"
               outlined
               placeholder="Password"
-              :type="showPassword ? 'password' : 'text'"
+              :type="hidePassword ? 'password' : 'text'"
               prepend-inner-icon="mdi-lock"
-              :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+              :append-icon="hidePassword ? 'mdi-eye' : 'mdi-eye-off'"
               :rules="[rules.required, rules.min8]"
-              @click:append="() => (showPassword = !showPassword)"
+              @click:append="() => (hidePassword = !hidePassword)"
             />
             <v-btn
               type="submit"
@@ -46,12 +49,13 @@
               block
               large
               :disabled="!valid"
+              :loading="loading"
               @click.prevent="handleSubmit"
-              >sign in</v-btn
+              >sign up</v-btn
             >
             <p class="mt-4 text-center">
               Already have an account?
-              <nuxt-link to="/auth/signin">Sign In </nuxt-link>
+              <nuxt-link to="/auth/signin">Sign in </nuxt-link>
             </p>
           </v-form>
         </v-card>
@@ -66,8 +70,12 @@ export default {
   layout: 'auth',
   data() {
     return {
-      valid: false,
+      valid: true,
+      hidePassword: true,
+      loading: false,
       showPassword: false,
+      error: false,
+      error_message: '',
       formData: {
         username: '',
         email: '',
@@ -84,9 +92,23 @@ export default {
     }
   },
   methods: {
-    handleSubmit() {
-      // eslint-disable-next-line no-console
-      console.log(this.formData)
+    async handleSubmit() {
+      if (!this.$refs.form.validate()) return
+
+      this.error = false
+      this.error_message = ''
+      try {
+        this.loading = true
+        const response = await this.$axios.$post('auth/signup', this.formData)
+        await this.$auth.setUserToken(response.access_token)
+        await this.$auth.fetchUser()
+        this.loading = false
+        this.$router.push('/dashboard')
+      } catch ({ response }) {
+        this.error = true
+        this.error_message = response.data.message
+        this.loading = false
+      }
     },
   },
 }

@@ -70,7 +70,7 @@ export default {
         endpoints: {
           login: { url: '/auth/signin', method: 'post' },
           logout: { url: '/', method: 'post' },
-          user: { url: '/auth/me', method: 'get' },
+          user: { url: '/profile/user', method: 'get' },
         },
       },
     },

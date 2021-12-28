@@ -7,13 +7,13 @@
           <v-alert v-if="error" type="error" dismissible dense>
             {{ error_message }}
           </v-alert>
-          <form class="mt-8">
+          <v-form v-model="valid" lazy-validation class="mt-8">
             <v-text-field
               v-model="formData.username"
               outlined
               placeholder="Username, Staff ID or Email"
               prepend-inner-icon="mdi-account"
-              required
+              :rules="[rules.required]"
             />
             <v-text-field
               v-model="formData.password"
@@ -22,7 +22,7 @@
               :type="showPassword ? 'password' : 'text'"
               prepend-inner-icon="mdi-lock"
               :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
-              required
+              :rules="[rules.required]"
               @click:append="() => (showPassword = !showPassword)"
             />
             <nuxt-link to="/auth/forgot-password" class="block"
@@ -35,6 +35,7 @@
               large
               :loading="loading"
               type="submit"
+              :disabled="!valid"
               @click.prevent="handleSubmit"
               >sign in</v-btn
             >
@@ -42,7 +43,7 @@
               Don't have an account?
               <nuxt-link to="/auth/signup">Sign Up </nuxt-link>
             </p>
-          </form>
+          </v-form>
         </v-card>
       </v-col>
     </v-row>
@@ -55,6 +56,7 @@ export default {
   layout: 'auth',
   data() {
     return {
+      valid: false,
       loading: false,
       showPassword: false,
       error: false,
@@ -63,31 +65,33 @@ export default {
         username: '',
         password: '',
       },
+      rules: {
+        required: (v) => !!v || 'Required.',
+      },
     }
   },
   methods: {
     async handleSubmit() {
+      this.loading = true
       this.error = false
       this.error_message = ''
       try {
-        this.loading = true
         await this.$auth.loginWith('local', {
           data: this.formData,
         })
+
         this.loading = false
         this.$router.push('/dashboard')
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.log(error)
+      } catch ({ response }) {
         this.error = true
-        this.error_message = error.response.data.message
+        this.error_message = response.data.message
         this.loading = false
       }
     },
   },
 }
 </script>
-<style>
+<style scoped>
 a {
   text-decoration: none;
 }

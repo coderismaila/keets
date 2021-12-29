@@ -1,37 +1,81 @@
 <template>
   <v-app dark>
     <v-navigation-drawer v-model="drawer" clipped fixed app>
-      <v-list>
-        <v-list-item
-          v-for="(item, i) in items"
-          :key="i"
-          :to="item.to"
-          router
-          exact
-        >
-          <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-action>
+      <v-list nav dense>
+        <v-list-item nuxt to="/dashboard">
+          <v-list-item-icon>
+            <v-icon>mdi-home</v-icon>
+          </v-list-item-icon>
           <v-list-item-content>
-            <v-list-item-title v-text="item.title" />
+            <v-list-item-title>Dashboard</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+        <v-list-group
+          v-for="item in items"
+          :key="item.title"
+          v-model="item.active"
+          :prepend-icon="item.icon"
+          no-action
+        >
+          <template #activator>
+            <v-list-item-content>
+              <v-list-item-title v-text="item.title"></v-list-item-title>
+            </v-list-item-content>
+          </template>
+
+          <v-list-item
+            v-for="child in item.items"
+            :key="child.title"
+            nuxt
+            :to="child.to"
+          >
+            <v-list-item-content>
+              <v-list-item-title v-text="child.title"></v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-group>
       </v-list>
+      <template #append>
+        <div class="pa-2">
+          <v-btn v-if="$auth.loggedIn" block @click="signOut"> Sign Out </v-btn>
+        </div>
+      </template>
     </v-navigation-drawer>
     <v-app-bar elevate-on-scroll elevation="1" clipped-left fixed app>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-toolbar-title v-text="title" />
+      <v-app-bar-nav-icon
+        v-if="$vuetify.breakpoint.mdAndDown"
+        @click.stop="drawer = !drawer"
+      />
+      <v-toolbar-title v-text="htitle" />
       <v-spacer />
-      <v-btn v-if="!$auth.loggedIn" nuxt to="/auth/signin">sign in</v-btn>
-      <v-btn v-if="!$auth.loggedIn" nuxt to="/auth/signup">sign up</v-btn>
-      <v-btn v-if="$auth.loggedIn" @click="signOut">sign out</v-btn>
+      <v-menu offset-y>
+        <template #activator="{ on, attrs }">
+          <v-btn text v-bind="attrs" v-on="on">
+            {{
+              $auth.user.firstName
+                ? $auth.user.firstName + ' ' + $auth.user.lastName
+                : $auth.user.user.username
+            }}
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item
+            v-for="(item, index) in profileItems"
+            :key="index"
+            nuxt
+            :to="item.to"
+          >
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-app-bar>
     <v-main>
       <v-container>
         <Nuxt />
       </v-container>
     </v-main>
-    <v-footer absolute app>
+    <v-footer inset app>
       <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
   </v-app>
@@ -45,12 +89,22 @@ export default {
       drawer: false,
       items: [
         {
-          icon: 'mdi-apps',
-          title: 'Dahsboard',
+          icon: 'mdi-toolbox',
+          title: 'Assets',
+          items: [
+            { title: 'Stations', to: '/station' },
+            { title: 'Transformers', to: '/transformer' },
+            { title: 'Feeders', to: '/feeders' },
+          ],
           to: '/',
         },
       ],
-      title: 'KEETS',
+      profileItems: [
+        { title: 'Profile', to: '/profile' },
+        { title: 'Update Password', to: '/update-password' },
+        { title: 'Sign Out', to: '/auth/signout' },
+      ],
+      htitle: 'KEETS',
     }
   },
 

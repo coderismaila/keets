@@ -1,5 +1,7 @@
 <template>
-  <div>Dashboard: {{ $auth.user }}</div>
+  <v-container>
+    <div>Dashboard: {{ $auth.user }}</div>
+  </v-container>
 </template>
 <script>
 export default {

@@ -96,7 +96,7 @@ export const actions = {
   async deleteStation(context, payload) {
     try {
       context.commit('SET_ERROR')
-      const station = await this.$axios.$delete(`/category/${payload.id}`)
+      const station = await this.$axios.$delete(`/station/${payload.id}`)
       context.commit('REMOVE_STATION', station)
     } catch ({ response }) {
       // eslint-disable-next-line no-console

@@ -185,23 +185,6 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
-          <v-dialog v-model="dialogDelete" max-width="500px">
-            <v-card>
-              <v-card-title class="text-h7"
-                >Are you sure you want to delete this item?</v-card-title
-              >
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="closeDelete"
-                  >Cancel</v-btn
-                >
-                <v-btn color="blue darken-1" text @click="deleteItemConfirm"
-                  >OK</v-btn
-                >
-                <v-spacer></v-spacer>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
         </v-toolbar>
       </template>
       <template #[`item.actions`]="{ item }">
@@ -212,6 +195,7 @@
   </v-container>
 </template>
 <script>
+import { Confirm, Notify, Report } from 'notiflix'
 import { mapActions, mapGetters, mapState } from 'vuex'
 import rules from '~/mixins/rules'
 
@@ -223,7 +207,6 @@ export default {
       panel: [0],
       title: 'Station',
       dialog: false,
-      dialogDelete: false,
       loading: false,
       editedIndex: -1,
       editedItem: {
@@ -292,10 +275,6 @@ export default {
     dialog(val) {
       val || this.close()
     },
-
-    dialogDelete(val) {
-      val || this.closeDelete()
-    },
   },
 
   methods: {
@@ -327,6 +306,11 @@ export default {
         return
       }
       this.close()
+      Notify.success(
+        `${this.editedItem.name} has been ${
+          this.editedIndex > -1 ? 'updated' : 'added'
+        }`
+      )
     },
 
     editItem(item) {
@@ -347,20 +331,30 @@ export default {
     deleteItem(item) {
       this.editedIndex = this.stationTableData.indexOf(item)
       this.editedItem = Object.assign({}, item)
-      this.dialogDelete = true
-    },
 
-    deleteItemConfirm() {
-      this.stationTableData.splice(this.editedIndex, 1)
-      this.closeDelete()
-    },
-
-    closeDelete() {
-      this.dialogDelete = false
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      })
+      Confirm.show(
+        'Delete Station',
+        'Are you sure you want to delete this station?',
+        'Yes',
+        'No',
+        async () => {
+          try {
+            await this.deleteStation(this.editedItem)
+            if (this.station_error) {
+              Notify.failure(this.station_error_message, () => {
+                this.$store.commit('station/SET_ERROR')
+              })
+            } else {
+              Notify.success('Station deleted successfully')
+            }
+          } catch ({ response }) {
+            Report.failure('Error', response.data.message, 'OK')
+          }
+        },
+        () => {
+          this.close()
+        }
+      )
     },
   },
 }

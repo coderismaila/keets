@@ -19,11 +19,11 @@
               v-model="formData.password"
               outlined
               placeholder="Password"
-              :type="showPassword ? 'password' : 'text'"
+              :type="hidePassword ? 'password' : 'text'"
               prepend-inner-icon="mdi-lock"
-              :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+              :append-icon="hidePassword ? 'mdi-eye' : 'mdi-eye-off'"
               :rules="[rules.required]"
-              @click:append="() => (showPassword = !showPassword)"
+              @click:append="() => (hidePassword = !hidePassword)"
             />
             <nuxt-link to="/auth/forgot-password" class="block"
               >Forgot password?</nuxt-link
@@ -58,7 +58,7 @@ export default {
     return {
       valid: false,
       loading: false,
-      showPassword: false,
+      hidePassword: true,
       error: false,
       error_message: '',
       formData: {

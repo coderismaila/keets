@@ -15,7 +15,7 @@
               outlined
               placeholder="Username"
               prepend-inner-icon="mdi-account"
-              :rules="[rules.required, rules.min4]"
+              :rules="[required, min4]"
             />
             <v-text-field
               v-model="formData.staffId"
@@ -23,7 +23,7 @@
               outlined
               placeholder="Staff ID"
               prepend-inner-icon="mdi-numeric"
-              :rules="[rules.required, rules.min4, rules.max6]"
+              :rules="[required, min4, max6]"
             />
             <v-text-field
               v-model="formData.email"
@@ -31,7 +31,7 @@
               outlined
               placeholder="Email"
               prepend-inner-icon="mdi-email"
-              :rules="[rules.required, rules.email]"
+              :rules="[required, email]"
             />
             <v-text-field
               v-model="formData.password"
@@ -40,7 +40,7 @@
               :type="hidePassword ? 'password' : 'text'"
               prepend-inner-icon="mdi-lock"
               :append-icon="hidePassword ? 'mdi-eye' : 'mdi-eye-off'"
-              :rules="[rules.required, rules.min8]"
+              :rules="[required, min8]"
               @click:append="() => (hidePassword = !hidePassword)"
             />
             <v-btn
@@ -64,8 +64,11 @@
   </v-container>
 </template>
 <script>
+import rules from '~/mixins/rules'
+
 export default {
   name: 'SignupPage',
+  mixins: [rules],
   auth: false,
   layout: 'auth',
   data() {
@@ -81,13 +84,6 @@ export default {
         email: '',
         staffId: '',
         password: '',
-      },
-      rules: {
-        required: (v) => !!v || 'Required.',
-        min8: (v) => v.length >= 8 || 'Min 8 characters',
-        min4: (v) => v.length >= 4 || 'Min 4 characters',
-        max6: (v) => v.length <= 6 || 'Max 6 characters',
-        email: (v) => /.+@.+\..+/.test(v) || 'E-mail must be valid',
       },
     }
   },

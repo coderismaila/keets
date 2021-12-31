@@ -1,10 +1,16 @@
 <template>
   <v-app dark>
-    <v-navigation-drawer v-model="drawer" clipped fixed app>
+    <v-navigation-drawer
+      v-model="drawer"
+      mobile-breakpoint="900"
+      clipped
+      fixed
+      app
+    >
       <v-list nav dense>
         <v-list-item nuxt to="/dashboard">
           <v-list-item-icon>
-            <v-icon>mdi-home</v-icon>
+            <v-icon>mdi-home-outline</v-icon>
           </v-list-item-icon>
           <v-list-item-content>
             <v-list-item-title>Dashboard</v-list-item-title>
@@ -41,7 +47,15 @@
         </div>
       </template>
     </v-navigation-drawer>
-    <v-app-bar elevate-on-scroll elevation="1" clipped-left fixed app>
+    <v-app-bar
+      color="primary"
+      elevate-on-scroll
+      elevation="1"
+      clipped-left
+      fixed
+      dark
+      app
+    >
       <v-app-bar-nav-icon
         v-if="$vuetify.breakpoint.mdAndDown"
         @click.stop="drawer = !drawer"
@@ -52,9 +66,11 @@
         <template #activator="{ on, attrs }">
           <v-btn text v-bind="attrs" v-on="on">
             {{
-              $auth.user.firstName
-                ? $auth.user.firstName + ' ' + $auth.user.lastName
-                : $auth.user.user.username
+              $auth.loggedIn
+                ? $auth.user.firstName
+                  ? $auth.user.firstName + ' ' + $auth.user.lastName
+                  : $auth.user.user.username
+                : ''
             }}
           </v-btn>
         </template>
@@ -89,10 +105,10 @@ export default {
       drawer: false,
       items: [
         {
-          icon: 'mdi-toolbox',
+          icon: 'mdi-toolbox-outline',
           title: 'Assets',
           items: [
-            { title: 'Stations', to: '/station' },
+            { title: 'Stations', to: '/assets/station' },
             { title: 'Transformers', to: '/transformer' },
             { title: 'Feeders', to: '/feeders' },
           ],

@@ -1,27 +1,42 @@
 <template>
   <v-container>
     <v-data-table
+      :search="search"
       calculate-widths
       mobile-breakpoint="0"
       :headers="headers"
       :items="stationTableData"
-      :items-per-page="5"
+      :items-per-page="10"
       :loading="$fetchState.pending"
     >
-      <template #top="{ item }">
+      <template #top>
         <v-toolbar flat>
           <v-toolbar-title>Station</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
+          <v-text-field
+            v-model="search"
+            dense
+            outlined
+            placeholder="Search"
+            append-icon="mdi-magnify"
+            single-line
+            hide-details=""
+            class="mx-4"
+          ></v-text-field>
           <v-spacer></v-spacer>
           <!-- Station Dialog -->
           <station-dialog
-            :item="{ item }"
             :dialog-prop.sync="dialog"
             :edited-item-prop.sync="editedItem"
             :edited-index-prop.sync="editedIndex"
           />
           <!-- Station Dialog -->
         </v-toolbar>
+      </template>
+      <template #[`item.name`]="{ item }">
+        <nuxt-link :to="`/assets/station/${item.id}`">{{
+          item.name
+        }}</nuxt-link>
       </template>
       <template #[`item.actions`]="{ item }">
         <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
@@ -41,6 +56,7 @@ export default {
   data() {
     return {
       title: 'Station',
+      search: '',
       loading: false,
       dialog: false,
       editedIndex: -1,
@@ -70,7 +86,8 @@ export default {
         {
           text: 'Station Name',
           align: 'start',
-          sortable: false,
+          sortable: true,
+          search: true,
           value: 'name',
           width: '300px',
         },

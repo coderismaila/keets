@@ -30,6 +30,10 @@ export const mutations = {
 
 // getters
 export const getters = {
+  getStationById: (state) => (id) => {
+    return state.stations.find((station) => station.id === id)
+  },
+
   stationTableData: (state) => {
     const data = []
     state.stations.forEach((station) => {

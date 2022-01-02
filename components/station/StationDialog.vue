@@ -45,7 +45,7 @@
               </v-radio-group>
             </v-col>
           </v-row>
-          <v-divider />
+          <v-divider v-show="editedIndex === -1" />
           <v-row class="pt-4">
             <v-expansion-panels
               v-show="editedIndex === -1"
@@ -129,7 +129,7 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn small tile @click.native="close"> Cancel </v-btn>
+        <v-btn small tile @click="close"> Cancel </v-btn>
         <v-btn small tile color="primary" :loading="loading" @click="save">
           {{ buttonText }}
         </v-btn>
@@ -144,10 +144,6 @@ import { mapActions, mapGetters, mapState } from 'vuex'
 export default {
   name: 'StationDialog',
   props: {
-    item: {
-      type: Object,
-      required: true,
-    },
     dialogProp: {
       type: Boolean,
       required: true,

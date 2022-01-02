@@ -109,8 +109,15 @@ export default {
           title: 'Assets',
           items: [
             { title: 'Stations', to: '/assets/station' },
-            { title: 'Transformers', to: '/transformer' },
-            { title: 'Feeders', to: '/feeders' },
+            {
+              title: 'Power Transformers',
+              to: '/assets/transformers/power-transformer',
+            },
+            {
+              title: 'Distribution Transformers',
+              to: '/assets/transformers/distriution-transformer',
+            },
+            { title: 'Feeders', to: '/assets/feeders' },
           ],
           to: '/',
         },

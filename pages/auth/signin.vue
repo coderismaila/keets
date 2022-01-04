@@ -81,7 +81,7 @@ export default {
         })
 
         this.loading = false
-        this.$router.push('/dashboard')
+        this.$router.back()
       } catch ({ response }) {
         this.error = true
         this.error_message = response.data.message

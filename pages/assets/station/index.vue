@@ -11,8 +11,12 @@
     >
       <template #top>
         <v-toolbar flat>
-          <v-toolbar-title>Station</v-toolbar-title>
+          <v-toolbar-title v-if="!$vuetify.breakpoint.mobile"
+            >Station</v-toolbar-title
+          >
           <v-divider class="mx-4" inset vertical></v-divider>
+
+          <v-spacer v-if="!$vuetify.breakpoint.mobile"></v-spacer>
           <v-text-field
             v-model="search"
             dense
@@ -21,9 +25,9 @@
             append-icon="mdi-magnify"
             single-line
             hide-details=""
-            class="mx-4"
+            class="mx-4 max-w-sm pl-0"
           ></v-text-field>
-          <v-spacer></v-spacer>
+
           <!-- Station Dialog -->
           <station-dialog
             :dialog-prop.sync="dialog"
@@ -145,3 +149,8 @@ export default {
   },
 }
 </script>
+<style scoped>
+.v-toolbar__content {
+  padding: 0 !important;
+}
+</style>

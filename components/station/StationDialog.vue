@@ -1,9 +1,17 @@
 <template>
   <v-dialog v-model="dialog" max-width="400px">
     <template #activator="{ on, attrs }">
-      <v-btn tile color="primary" dark v-bind="attrs" v-on="on">
-        New Station
-        <v-icon right dark> mdi-plus </v-icon>
+      <v-btn
+        tile
+        color="primary"
+        dark
+        class="flex-inline"
+        v-bind="attrs"
+        v-on="on"
+      >
+        <span v-if="$vuetify.breakpoint.mdAndUp"> New Station </span>
+
+        <v-icon dark> mdi-plus </v-icon>
       </v-btn>
     </template>
     <v-card class="py-4">

@@ -97,7 +97,7 @@ export default {
 
   async fetch() {
     await this.$store.dispatch('user/getAllUsers')
-    await this.$store.dispatch('area-office/getAllAreaOffices')
+    await this.$store.dispatch('areaoffice/getAllAreaOffices')
   },
 
   computed: {

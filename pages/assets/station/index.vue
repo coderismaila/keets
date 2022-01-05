@@ -37,14 +37,19 @@
           <!-- Station Dialog -->
         </v-toolbar>
       </template>
-      <template #[`item.name`]="{ item }">
-        <nuxt-link :to="`/assets/station/${item.id}`">{{
-          item.name
-        }}</nuxt-link>
-      </template>
+
       <template #[`item.actions`]="{ item }">
-        <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
-        <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
+        <div class="d-flex">
+          <v-btn icon nuxt :to="`/assets/station/${item.id}`">
+            <v-icon small> mdi-eye-outline </v-icon></v-btn
+          >
+          <v-btn icon @click="editItem(item)">
+            <v-icon small> mdi-pencil-outline </v-icon></v-btn
+          >
+          <v-btn icon @click="deleteItem(item)">
+            <v-icon small> mdi-delete-outline </v-icon></v-btn
+          >
+        </div>
       </template>
     </v-data-table>
   </v-container>

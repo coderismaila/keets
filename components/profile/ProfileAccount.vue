@@ -75,7 +75,7 @@ export default {
   },
   async fetch() {},
   created() {
-    this.formData = this.$auth.user.user
+    this.formData = this.$auth.user
   },
 }
 </script>

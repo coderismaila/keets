@@ -49,6 +49,7 @@ export const actions = {
       })
     }
   },
+
   async addAreaOffice(context, payload) {
     try {
       context.commit('SET_ERROR')
@@ -63,6 +64,7 @@ export const actions = {
       })
     }
   },
+
   async updateAreaOffice(context, payload) {
     try {
       context.commit('SET_ERROR')
@@ -80,6 +82,7 @@ export const actions = {
       })
     }
   },
+
   async deleteAreaOffice(context, payload) {
     try {
       context.commit('SET_ERROR')

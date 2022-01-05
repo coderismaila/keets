@@ -31,7 +31,10 @@
               </ul>
             </div>
 
-            <div v-if="transformer.feeder.length > 0" class="mt-4">
+            <div
+              v-if="transformer.feeder && transformer.feeder.length > 0"
+              class="mt-4"
+            >
               <p>Outgoing Feeders:</p>
               <ul>
                 <li v-for="feeder in transformer.feeder" :key="feeder.id">

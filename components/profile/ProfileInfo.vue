@@ -23,6 +23,7 @@
                 :disabled="disabled"
               ></v-text-field>
             </v-col>
+
             <v-col cols="12">
               <v-text-field
                 v-model="formData.lastName"
@@ -32,6 +33,7 @@
                 :disabled="disabled"
               ></v-text-field>
             </v-col>
+
             <v-col cols="12">
               <v-text-field
                 v-model="formData.middleName"
@@ -51,6 +53,7 @@
                 :disabled="disabled"
               ></v-text-field>
             </v-col>
+
             <v-col cols="12" class="py-0">
               <v-radio-group
                 v-model="formData.gender"
@@ -61,6 +64,34 @@
                 <v-radio label="Male" value="MALE"></v-radio>
                 <v-radio label="Female" value="FEMALE"></v-radio>
               </v-radio-group>
+            </v-col>
+
+            <v-col cols="12">
+              <v-select
+                v-model="formData.areaOfficeId"
+                :items="$store.state.areaoffice.areaOffices"
+                item-text="name"
+                item-value="id"
+                cache-items
+                placeholder="Area Office"
+                outlined
+                dense
+                :loading="loading"
+              ></v-select>
+            </v-col>
+
+            <v-col cols="12">
+              <v-select
+                v-model="formData.jobDescriptionId"
+                :items="$store.state.jobdescription.jobDescriptions"
+                item-text="name"
+                item-value="id"
+                cache-items
+                placeholder="Job Description"
+                outlined
+                dense
+                :loading="loading"
+              ></v-select>
             </v-col>
             <v-col cols="12">
               <date-picker
@@ -148,6 +179,8 @@ export default {
         middleName: '',
         phoneNumber: '',
         gender: '',
+        areaOfficeId: '',
+        jobDescriptionId: '',
         birthDate: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
           .toISOString()
           .substr(0, 10),
@@ -160,14 +193,26 @@ export default {
       },
     }
   },
+  async fetch() {
+    await this.$store.dispatch('areaoffice/getAllAreaOffices')
+    await this.$store.dispatch('jobdescription/getAlljobDescriptions')
+  },
+
+  computed: {
+    areaOffices() {
+      return this.$store.state.areaoffice.areaOffices
+    },
+  },
+
   created() {
     this.formData = { ...this.$auth.user }
   },
+
   methods: {
     async handleSubmit() {
       try {
         this.loading = true
-        await this.$axios.patch(`/profile/${this.$auth.user.id}`, this.formData)
+        await this.$axios.patch(`/user/${this.$auth.user.id}`, this.formData)
         this.loading = false
         this.disabled = true
         Notify.success('Profile updated successfully')

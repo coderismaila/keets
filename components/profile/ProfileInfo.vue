@@ -72,11 +72,25 @@
                 :items="$store.state.areaoffice.areaOffices"
                 item-text="name"
                 item-value="id"
+                :disabled="disabled"
                 cache-items
                 placeholder="Area Office"
                 outlined
                 dense
                 :loading="loading"
+              ></v-select>
+            </v-col>
+
+            <v-col cols="12" class="py-0">
+              <v-select
+                v-model="formData.designation"
+                :items="designations"
+                item-text="text"
+                item-value="value"
+                :disabled="disabled"
+                outlined
+                dense
+                label="Designation*"
               ></v-select>
             </v-col>
 
@@ -86,8 +100,9 @@
                 :items="$store.state.jobdescription.jobDescriptions"
                 item-text="name"
                 item-value="id"
+                :disabled="disabled"
                 cache-items
-                placeholder="Job Description"
+                label="Job Description"
                 outlined
                 dense
                 :loading="loading"
@@ -180,6 +195,7 @@ export default {
         phoneNumber: '',
         gender: '',
         areaOfficeId: '',
+        designation: '',
         jobDescriptionId: '',
         birthDate: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
           .toISOString()
@@ -191,6 +207,13 @@ export default {
         stateOfOrigin: '',
         country: '',
       },
+      designations: [
+        { text: 'Chief Technical Office', value: 'CHIEF_TECHNICAL_OFFICER' },
+        { text: 'Head of Unit', value: 'HEAD_OF_UNIT' },
+        { text: 'Technical Manager', value: 'TECHNICAL_MANAGER' },
+        { text: 'Team Lead', value: 'TEAM_LEAD' },
+        { text: 'Team Member', value: 'TEAM_MEMBER' },
+      ],
     }
   },
   async fetch() {
@@ -213,6 +236,7 @@ export default {
       try {
         this.loading = true
         await this.$axios.patch(`/user/${this.$auth.user.id}`, this.formData)
+        await this.$auth.fetchUser()
         this.loading = false
         this.disabled = true
         Notify.success('Profile updated successfully')

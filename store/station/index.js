@@ -66,6 +66,7 @@ export const actions = {
       })
     }
   },
+
   async addStation(context, payload) {
     try {
       context.commit('SET_ERROR')
@@ -80,13 +81,17 @@ export const actions = {
       })
     }
   },
+
   async updateStation(context, payload) {
+    console.log({ payload })
     try {
       context.commit('SET_ERROR')
       const station = await this.$axios.$patch(
         `/station/${payload.id}`,
         payload
       )
+
+      console.log({ station })
       context.commit('UPDATE_STATION', station)
     } catch ({ response }) {
       // eslint-disable-next-line no-console
@@ -97,6 +102,7 @@ export const actions = {
       })
     }
   },
+
   async deleteStation(context, payload) {
     try {
       context.commit('SET_ERROR')

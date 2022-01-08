@@ -3,7 +3,7 @@
     <v-data-table
       :search="search"
       :headers="headers"
-      :items="$store.state.user.users"
+      :items="users"
       :loading="$fetchState.pending"
       mobile-breakpoint="0"
     >
@@ -32,6 +32,15 @@
         </v-toolbar>
       </template>
 
+      <template #[`item.firstName`]="{ item }">
+        {{
+          item.firstName +
+          ' ' +
+          item.lastName +
+          (item.middleName ? item.middleName : '')
+        }}
+      </template>
+
       <template #[`item.actions`]="{ item }">
         <div class="d-flex">
           <v-btn icon @click="editItem(item)"
@@ -57,17 +66,16 @@ export default {
       dialog: false,
       editedIndex: -1,
       editedItem: {
-        user: {
-          username: '',
-          staffId: '',
-          email: '',
-          password: '',
-          role: '',
-        },
-
+        username: '',
+        staffId: '',
+        email: '',
+        password: '',
+        role: '',
         firstName: '',
         lastName: '',
-        areaOffice: { name: '' },
+        designation: '',
+        areaOfficeId: '',
+        jobDescriptionId: '',
         phoneNumber: '',
         gender: '',
         birthDate: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
@@ -82,14 +90,13 @@ export default {
       },
       search: '',
       headers: [
-        { text: 'Staff ID', value: 'user.staffId', width: '100px' },
-        { text: 'First Name', value: 'firstName', width: '120px' },
-        { text: 'Last Name', value: 'lastName', width: '120px' },
-        { text: 'Other Name', value: 'middleName', width: '120px' },
-        { text: 'Username', value: 'user.username', width: '150px' },
-        { text: 'Role', value: 'user.role', width: '50px' },
-        { text: 'Email', value: 'user.email', width: '200px' },
+        { text: 'Staff ID', value: 'staffId', width: '95px' },
+        { text: 'Name', value: 'firstName', width: '150px' },
+        { text: 'Username', value: 'username', width: '150px' },
+        { text: 'Email', value: 'email', width: '150px' },
         { text: 'Area Office', value: 'areaOffice.name', width: '120px' },
+        { text: 'Designation', value: 'designation', width: '100px' },
+        { text: 'Role', value: 'role', width: '100px' },
         { text: 'Actions', value: 'actions', sortable: false, width: '80px' },
       ],
     }
@@ -98,10 +105,11 @@ export default {
   async fetch() {
     await this.$store.dispatch('user/getAllUsers')
     await this.$store.dispatch('areaoffice/getAllAreaOffices')
+    await this.$store.dispatch('jobdescription/getAlljobDescriptions')
   },
 
   computed: {
-    ...mapState('users', ['users']),
+    ...mapState('user', ['users']),
   },
 
   methods: {

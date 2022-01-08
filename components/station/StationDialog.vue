@@ -73,13 +73,16 @@
                       cols="12"
                     >
                       <v-text-field
-                        v-model="input.name"
+                        v-model="editedItem.powerTransformer[i].name"
+                        type="text"
                         outlined
                         dense
                         placeholder="Transformer Name"
                       ></v-text-field>
                       <v-text-field
-                        v-model.number="input.capacityKVA"
+                        v-model.number="
+                          editedItem.powerTransformer[i].capacityKVA
+                        "
                         type="number"
                         outlined
                         dense
@@ -137,8 +140,8 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn small tile @click="close"> Cancel </v-btn>
-        <v-btn small tile color="primary" :loading="loading" @click="save">
+        <v-btn @click="close"> Cancel </v-btn>
+        <v-btn color="primary" :loading="loading" @click="save">
           {{ buttonText }}
         </v-btn>
       </v-card-actions>
@@ -167,8 +170,6 @@ export default {
   },
   data() {
     return {
-      // dialog: false,
-
       defaultItem: {
         name: '',
         stationType: '',
@@ -184,9 +185,9 @@ export default {
       panel: [0],
     }
   },
+
   computed: {
-    ...mapGetters('station', ['stationTableData']),
-    ...mapState('area-office', {
+    ...mapState('areaoffice', {
       areaOffices: 'areaOffices',
       area_office_error: 'error',
       area_office_error_message: 'error_message',
@@ -195,7 +196,7 @@ export default {
       station_error: 'error',
       station_error_message: 'error_message',
     }),
-    ...mapGetters('area-office', ['areaOfficeNames']),
+    ...mapGetters('areaoffice', ['areaOfficeNames']),
 
     formTitle() {
       return this.editedIndex === -1 ? 'New Station' : 'Edit Station'
@@ -263,14 +264,15 @@ export default {
       this.loading = false
       // TODO: revisit this
       if (this.station_error) {
-        return
+        console.log(this.station_error_message)
+      } else {
+        this.close()
+        Notify.success(
+          `${this.editedItem.name} has been ${
+            this.editedIndex > -1 ? 'updated' : 'added'
+          }`
+        )
       }
-      this.close()
-      Notify.success(
-        `${this.editedItem.name} has been ${
-          this.editedIndex > -1 ? 'updated' : 'added'
-        }`
-      )
     },
     close() {
       this.dialog = false

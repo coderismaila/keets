@@ -85,11 +85,6 @@ export default {
         newPassword: '',
         confirmPassword: '',
       },
-      defaultData: {
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: '',
-      },
       isCurrentPasswordVisible: false,
       isNewPasswordVisible: false,
       isConfirmPasswordVisible: false,
@@ -104,7 +99,11 @@ export default {
           newPassword: this.formData.newPassword,
         })
         this.loading = false
-        this.formData = this.defaultData
+        this.formData = {
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: '',
+        }
         Notify.success('Password changed successfully')
       } catch ({ response }) {
         Notify.failure(response.data.message)

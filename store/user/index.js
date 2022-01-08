@@ -31,23 +31,6 @@ export const getters = {
   getUserById: (state) => (id) => {
     return state.users.find((station) => station.id === id)
   },
-
-  userTableData: (state) => {
-    const data = []
-    state.users.forEach((station) => {
-      data.push({
-        id: station.id,
-        name: station.name,
-        capacity: station.powerTransformer?.reduce(function (acc, cur) {
-          return acc + cur.capacityKVA
-        }, 0),
-        stationType: station.stationType,
-        areaOfficeName: station.areaOffice?.name,
-        powerTransformer: station.powerTransformer,
-      })
-    })
-    return data
-  },
 }
 
 // action
@@ -55,7 +38,7 @@ export const actions = {
   async getAllUsers(context) {
     try {
       context.commit('SET_ERROR')
-      const users = await this.$axios.$get('/profile')
+      const users = await this.$axios.$get('/user')
       context.commit('SET_USERS', users)
     } catch ({ response }) {
       context.commit('SET_ERROR', {
@@ -67,7 +50,7 @@ export const actions = {
   async addUser(context, payload) {
     try {
       context.commit('SET_ERROR')
-      const user = await this.$axios.$post('/profile', payload)
+      const user = await this.$axios.$post('/user', payload)
       context.commit('ADD_USER', user)
     } catch ({ response }) {
       // eslint-disable-next-line no-console
@@ -81,10 +64,7 @@ export const actions = {
   async updateUser(context, payload) {
     try {
       context.commit('SET_ERROR')
-      const station = await this.$axios.$patch(
-        `/profile/${payload.id}`,
-        payload
-      )
+      const station = await this.$axios.$patch(`/user/${payload.id}`, payload)
       context.commit('UPDATE_USER', station)
     } catch ({ response }) {
       // eslint-disable-next-line no-console
@@ -98,7 +78,7 @@ export const actions = {
   async deleteUser(context, payload) {
     try {
       context.commit('SET_ERROR')
-      const user = await this.$axios.$delete(`/profile/${payload.id}`)
+      const user = await this.$axios.$delete(`/user/${payload.id}`)
       context.commit('REMOVE_STATION', user)
     } catch ({ response }) {
       // eslint-disable-next-line no-console

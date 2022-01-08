@@ -46,6 +46,12 @@
         </v-card>
       </v-col>
     </v-row>
+    <div>
+      <v-tabs>
+        <v-tab>Power Transformer</v-tab>
+        <v-tab>Feeders</v-tab>
+      </v-tabs>
+    </div>
   </v-container>
 </template>
 <script>

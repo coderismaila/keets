@@ -26,7 +26,7 @@
           <v-row>
             <v-col cols="12" class="pb-0">
               <v-text-field
-                v-model="editedItem.user.staffId"
+                v-model="editedItem.staffId"
                 outlined
                 dense
                 label="Staff ID*"
@@ -35,7 +35,7 @@
 
             <v-col cols="12" class="py-0">
               <v-text-field
-                v-model="editedItem.user.username"
+                v-model="editedItem.username"
                 outlined
                 dense
                 label="Username *"
@@ -43,7 +43,7 @@
             </v-col>
             <v-col cols="12" class="py-0">
               <v-text-field
-                v-model="editedItem.user.email"
+                v-model="editedItem.email"
                 type="email"
                 outlined
                 dense
@@ -51,8 +51,17 @@
               ></v-text-field>
             </v-col>
             <v-col cols="12" class="py-0">
+              <v-text-field
+                v-model="editedItem.password"
+                type="text"
+                outlined
+                dense
+                label="Temporary Password"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" class="py-0">
               <v-select
-                v-model="editedItem.user.role"
+                v-model="editedItem.role"
                 :items="roles"
                 outlined
                 dense
@@ -87,19 +96,43 @@
             </v-col>
 
             <v-col cols="12" class="py-0">
-              <v-combobox
-                v-model="editedItem.areaOffice.name"
-                :items="$store.getters['area-office/areaOfficeNames']"
+              <v-select
+                v-model="editedItem.areaOfficeId"
+                :items="$store.state.areaoffice.areaOffices"
+                item-text="name"
+                item-value="id"
                 outlined
                 dense
                 label="Area Office*"
-              ></v-combobox>
+              ></v-select>
+            </v-col>
+            <v-col cols="12" class="py-0">
+              <v-select
+                v-model="editedItem.designation"
+                :items="designations"
+                item-text="text"
+                item-value="value"
+                outlined
+                dense
+                label="Designation*"
+              ></v-select>
+            </v-col>
+            <v-col cols="12" class="py-0">
+              <v-select
+                v-model="editedItem.jobDescriptionId"
+                :items="$store.state.jobdescription.jobDescriptions"
+                item-text="name"
+                item-value="id"
+                outlined
+                dense
+                label="Job Description*"
+              ></v-select>
             </v-col>
 
             <v-col cols="12" class="pb-0">
               <v-text-field
                 v-model="editedItem.phoneNumber"
-                label="Phone Number"
+                label="Phone Number*"
                 dense
                 outlined
               ></v-text-field>
@@ -196,17 +229,16 @@ export default {
     return {
       disabled: false,
       defaultItem: {
-        user: {
-          username: '',
-          staffId: '',
-          email: '',
-          password: '',
-          role: '',
-        },
+        username: '',
+        staffId: '',
+        email: '',
+        password: '',
+        role: '',
         firstName: '',
         lastName: '',
-        areaOffice: '',
-        jobDescription: '',
+        designation: '',
+        areaOfficeId: '',
+        jobDescriptionId: '',
         phoneNumber: '',
         gender: '',
         birthDate: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
@@ -221,13 +253,25 @@ export default {
       },
       loading: false,
       roles: ['ADMIN', 'USER', 'MOD', 'SUPER'],
+      designations: [
+        { text: 'Chief Technical Office', value: 'CHIEF_TECHNICAL_OFFICER' },
+        { text: 'Head of Unit', value: 'HEAD_OF_UNIT' },
+        { text: 'Technical Manager', value: 'TECHNICAL_MANAGER' },
+        { text: 'Team Lead', value: 'TEAM_LEAD' },
+        { text: 'Team Member', value: 'TEAM_MEMBER' },
+      ],
     }
   },
   computed: {
-    ...mapState('area-office', {
+    ...mapState('areaoffice', {
       areaOffices: 'areaOffices',
       area_office_error: 'error',
       area_office_error_message: 'error_message',
+    }),
+    ...mapState('user', {
+      users: 'users',
+      user_error: 'error',
+      user_error_message: 'error_message',
     }),
 
     formTitle() {
@@ -270,7 +314,7 @@ export default {
   },
 
   methods: {
-    ...mapActions('station', ['addUser', 'updateUser', 'deleteUser']),
+    ...mapActions('user', ['addUser', 'updateUser', 'deleteUser']),
 
     async save() {
       this.loading = true
@@ -281,12 +325,13 @@ export default {
       }
       this.loading = false
       // TODO: revisit this
-      if (this.station_error) {
+      if (this.user_error) {
+        Notify.failure(`${this.user_error_message}`)
         return
       }
       this.close()
       Notify.success(
-        `${this.editedItem.name} has been ${
+        `${this.editedItem.username} has been ${
           this.editedIndex > -1 ? 'updated' : 'added'
         }`
       )

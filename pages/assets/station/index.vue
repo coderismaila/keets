@@ -43,7 +43,7 @@
           <v-btn icon nuxt :to="`/assets/station/${item.id}`">
             <v-icon small> mdi-eye-outline </v-icon></v-btn
           >
-          <v-btn icon @click="editItem(item)">
+          <v-btn icon @click="editItem({ ...item })">
             <v-icon small> mdi-pencil-outline </v-icon></v-btn
           >
           <v-btn icon @click="deleteItem(item)">
@@ -56,7 +56,8 @@
 </template>
 <script>
 import { Confirm, Notify, Report } from 'notiflix'
-import { mapActions, mapGetters } from 'vuex'
+import { isEqual } from 'lodash'
+import { mapActions, mapGetters, mapState } from 'vuex'
 import rules from '~/mixins/rules'
 
 export default {
@@ -113,14 +114,22 @@ export default {
   },
 
   computed: {
+    ...mapState('station', ['stationTableData', 'error', 'error_message']),
     ...mapGetters('station', ['stationTableData']),
   },
 
   methods: {
     ...mapActions('station', ['deleteStation']),
 
+    findIndex(array, item) {
+      for (let i = 0; i < array.length; i++) {
+        if (isEqual(array[i], item)) return i
+      }
+      return -1
+    },
+
     editItem(item) {
-      this.editedIndex = this.stationTableData.indexOf(item)
+      this.editedIndex = this.findIndex(this.stationTableData, item)
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
@@ -137,10 +146,13 @@ export default {
         async () => {
           try {
             await this.deleteStation(this.editedItem)
-            if (this.station_error) {
-              Notify.failure(this.station_error_message, () => {
-                this.$store.commit('station/SET_ERROR')
-              })
+            if (this.error) {
+              Notify.failure(
+                `Error deleting station. \n ${this.error_message}`,
+                () => {
+                  this.$store.commit('station/SET_ERROR')
+                }
+              )
             } else {
               Notify.success('Station deleted successfully')
             }

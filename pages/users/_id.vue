@@ -13,10 +13,10 @@
             (user.middleName ? user.middleName : '')
           }}
         </p>
-        <p>Username: {{ user.user.username }}</p>
-        <p>Email: {{ user.user.email }}</p>
-        <p>Staff ID: {{ user.user.staffId }}</p>
-        <p>Role: {{ user.user.role }}</p>
+        <p>Username: {{ user.username }}</p>
+        <p>Email: {{ user.email }}</p>
+        <p>Staff ID: {{ user.staffId }}</p>
+        <p>Role: {{ user.role }}</p>
       </v-card-text>
     </v-card>
   </v-container>

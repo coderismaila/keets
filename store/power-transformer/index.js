@@ -57,8 +57,8 @@ export const actions = {
   async getAllPowerTransformers(context) {
     try {
       context.commit('SET_ERROR')
-      const powerTransformers = await this.$axios.$get('/powerTransformer')
-      context.commit('SET_STATIONS', powerTransformers)
+      const powerTransformers = await this.$axios.$get('/power-transformer')
+      context.commit('SET_POWER_TRANSFORMERS', powerTransformers)
     } catch ({ response }) {
       context.commit('SET_ERROR', {
         error: true,

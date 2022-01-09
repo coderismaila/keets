@@ -2,7 +2,6 @@
   <v-container>
     <v-data-table
       :search="search"
-      calculate-widths
       mobile-breakpoint="0"
       :headers="headers"
       :items="stationTableData"

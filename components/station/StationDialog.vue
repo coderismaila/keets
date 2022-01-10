@@ -29,7 +29,7 @@
                 v-model="editedItem.name"
                 outlined
                 dense
-                placeholder="Station Name"
+                label="Station Name"
               ></v-text-field>
             </v-col>
             <v-col cols="12" class="py-0">
@@ -39,7 +39,7 @@
                 cache-items
                 :error="area_office_error"
                 :error-messages="area_office_error_message"
-                placeholder="Area Office"
+                label="Area Office"
                 outlined
                 dense
                 :loading="loading"
@@ -77,8 +77,17 @@
                         type="text"
                         outlined
                         dense
-                        placeholder="Transformer Name"
+                        label="Transformer Name"
                       ></v-text-field>
+                      <v-select
+                        v-model="editedItem.powerTransformer[i].voltageRating"
+                        :items="voltageRatings"
+                        item-text="text"
+                        item-value="value"
+                        outlined
+                        dense
+                        label="Voltage Rating"
+                      ></v-select>
                       <v-text-field
                         v-model.number="
                           editedItem.powerTransformer[i].capacityKVA
@@ -86,8 +95,70 @@
                         type="number"
                         outlined
                         dense
-                        placeholder="CapacityKVA"
+                        label="CapacityKVA"
                       ></v-text-field>
+                      <v-text-field
+                        v-model.number="
+                          editedItem.powerTransformer[i].ratedCurrent
+                        "
+                        type="number"
+                        outlined
+                        dense
+                        placeholder="Rated Current(A)"
+                      ></v-text-field>
+                      <v-text-field
+                        v-model.number="
+                          editedItem.powerTransformer[i].transformerPeakLoadMW
+                        "
+                        type="number"
+                        outlined
+                        dense
+                        placeholder="Transformer Peak Load(MW)"
+                      ></v-text-field>
+                      <v-select
+                        v-show="
+                          editedItem.powerTransformer[i].voltageRating ===
+                          '132/33KV'
+                        "
+                        v-model.number="
+                          editedItem.powerTransformer[i].sourceStationId
+                        "
+                        :items="filteredSourceStations(i)"
+                        item-text="name"
+                        item-value="id"
+                        outlined
+                        dense
+                        label="Source Station"
+                      ></v-select>
+                      <v-select
+                        v-show="
+                          editedItem.powerTransformer[i].voltageRating ===
+                          '132/33KV'
+                        "
+                        v-model.number="
+                          editedItem.powerTransformer[i]
+                            .sourcePowerTransformerId
+                        "
+                        :items="filteredSourcePowerTransformers(i)"
+                        item-text="name"
+                        item-value="id"
+                        outlined
+                        dense
+                        label="Source Power Transformer"
+                      ></v-select>
+                      <v-select
+                        v-show="editedItem.stationType === 'DISTRIBUTION'"
+                        v-model.number="
+                          editedItem.powerTransformer[i].feeder33kvId
+                        "
+                        :items="$store.getters['feeder/get33kvFeeders']"
+                        item-text="name"
+                        item-value="id"
+                        type="number"
+                        outlined
+                        dense
+                        label="33KV feeder"
+                      ></v-select>
                       <v-tooltip bottom>
                         <template #activator="{ on, attrs }">
                           <v-btn
@@ -178,9 +249,20 @@ export default {
           {
             name: '',
             capacityKVA: '',
+            voltageRating: '',
+            ratedCurrent: 0,
+            transformerPeakLoadMW: 0,
+            sourceStationId: null,
+            sourcePowerTransformerId: null,
+            feeder33kvId: null,
           },
         ],
       },
+      voltageRatings: [
+        { text: '330/132KV', value: '330/132KV' },
+        { text: '132/33KV', value: '132/33KV' },
+        { text: '33/11KV', value: '33/111KV' },
+      ],
       loading: false,
       panel: [0],
     }
@@ -192,11 +274,48 @@ export default {
       area_office_error: 'error',
       area_office_error_message: 'error_message',
     }),
+
     ...mapState('station', {
+      stations: 'stations',
       station_error: 'error',
       station_error_message: 'error_message',
     }),
+
+    ...mapState('power-transformer', {
+      powerTransformers: 'powerTransformers',
+      station_error: 'error',
+      station_error_message: 'error_message',
+    }),
+
+    ...mapState('feeder', {
+      feeders: 'feeders',
+      feeder_error: 'error',
+      feeder_error_message: 'error_message',
+    }),
+
     ...mapGetters('areaoffice', ['areaOfficeNames']),
+
+    filteredSourceStations() {
+      return (i) => {
+        if (this.editedItem.powerTransformer[i].voltageRating === '132/33KV') {
+          return this.stations.filter((station) =>
+            station.name.includes('330/132')
+          )
+        }
+        return this.stations.filter((station) =>
+          station.name.includes('132/11')
+        )
+      }
+    },
+
+    filteredSourcePowerTransformers() {
+      return (i) =>
+        this.powerTransformers.filter(
+          (powerTransformer) =>
+            powerTransformer.stationId ===
+            this.editedItem.powerTransformer[i].sourceStationId
+        )
+    },
 
     formTitle() {
       return this.editedIndex === -1 ? 'New Station' : 'Edit Station'
@@ -245,7 +364,7 @@ export default {
 
       // eslint-disable-next-line no-unused-vars
       for (const [key, value] of Object.entries(object)) {
-        newObject[key] = ''
+        newObject[key] = null
       }
       fieldType.push(newObject)
     },

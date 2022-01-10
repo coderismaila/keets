@@ -171,6 +171,7 @@ export default {
     await this.$store.dispatch('station/getAllStations')
     await this.$store.dispatch('areaoffice/getAllAreaOffices')
     await this.$store.dispatch('power-transformer/getAllPowerTransformers')
+    await this.$store.dispatch('feeder/getAllFeeders')
   },
 
   computed: {
@@ -198,10 +199,25 @@ export default {
       power_transformer_error_message: 'error_message',
     }),
 
+    ...mapState('feeder', {
+      feeders: 'feeders',
+      feeder_error: 'error',
+      feeder_error_message: 'error_message',
+    }),
+
     filteredStations() {
-      return this.stations.filter(
-        (station) => station.areaOfficeId === this.editedItem.areaOfficeId
-      )
+      if (this.editedItem.voltageLevel === 'KV33') {
+        return this.stations.filter((station) =>
+          station.name.includes('132/33')
+        )
+      } else if (this.editedItem.voltageLevel === 'KV11') {
+        return this.stations.filter(
+          (station) =>
+            station.areaOfficeId === this.editedItem.areaOfficeId &&
+            this.editedItem.voltageLevel === 'KV11'
+        )
+      }
+      return []
     },
 
     filteredPowerTransformers() {

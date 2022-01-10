@@ -77,6 +77,11 @@ export default {
           {
             name: '',
             capacityKVA: 0,
+            voltageRating: '',
+            ratedCurrent: '',
+            transformerPeakLoadMW: '',
+            sourcePowerTransformerId: null,
+            feeder33kvId: null,
           },
         ],
       },
@@ -88,6 +93,12 @@ export default {
           {
             name: '',
             capacityKVA: '',
+            voltageRating: '',
+            ratedCurrent: '',
+            transformerPeakLoadMW: '',
+            sourceStationId: null,
+            sourcePowerTransformerId: null,
+            feeder33kvId: null,
           },
         ],
       },
@@ -110,6 +121,8 @@ export default {
   async fetch() {
     await this.$store.dispatch('station/getAllStations')
     await this.$store.dispatch('areaoffice/getAllAreaOffices')
+    await this.$store.dispatch('power-transformer/getAllPowerTransformers')
+    await this.$store.dispatch('feeder/getAllFeeders')
   },
 
   computed: {

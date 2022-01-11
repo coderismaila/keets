@@ -10,18 +10,22 @@ export const mutations = {
   SET_POWER_TRANSFORMERS(state, payload) {
     state.powerTransformers = payload
   },
+
   ADD_POWER_TRANSFORMER(state, payload) {
     state.powerTransformers.push(payload)
   },
+
   REMOVE_POWER_TRANSFORMER(state, payload) {
     state.powerTransformers = state.powerTransformers.filter(
       (powerTransformer) => powerTransformer.id !== payload.id
     )
   },
+
   UPDATE_POWER_TRANSFORMER(state, payload) {
     const index = state.powerTransformers.findIndex((c) => c.id === payload.id)
     state.powerTransformers.splice(index, 1, payload)
   },
+
   SET_ERROR(state, payload) {
     state.error = payload ? payload.error : false
     state.error_message = payload ? payload.message : ''
@@ -30,25 +34,10 @@ export const mutations = {
 
 // getters
 export const getters = {
-  transformerTableData: (state) => {
-    const data = []
-    state.powerTransformers.forEach((powerTransformer) => {
-      data.push({
-        id: powerTransformer.id,
-        name: powerTransformer.name,
-        capacity: powerTransformer.powerTransformer?.reduce(function (
-          acc,
-          cur
-        ) {
-          return acc + cur.capacityKVA
-        },
-        0),
-        stationType: powerTransformer.stationType,
-        areaOfficeName: powerTransformer.areaOffice?.name,
-        powerTransformer: powerTransformer.powerTransformer,
-      })
-    })
-    return data
+  getPowerTransformerById: (state) => (id) => {
+    return state.powerTransformers.filter(
+      (transformer) => transformer.stationId === id
+    )
   },
 }
 
@@ -69,8 +58,11 @@ export const actions = {
   async addPowerTransformer(context, payload) {
     try {
       context.commit('SET_ERROR')
-      const category = await this.$axios.$post('/power-transformer', payload)
-      context.commit('ADD_STATION', category)
+      const powerTransformer = await this.$axios.$post(
+        `/station/${payload.stationId}/power-transformer`,
+        payload
+      )
+      context.commit('ADD_POWER_TRANSFORMER', powerTransformer)
     } catch ({ response }) {
       // eslint-disable-next-line no-console
       console.log('response error', response.data)
@@ -80,7 +72,7 @@ export const actions = {
       })
     }
   },
-  async updateTransformer(context, payload) {
+  async updatePowerTransformer(context, payload) {
     try {
       context.commit('SET_ERROR')
       const powerTransformer = await this.$axios.$patch(

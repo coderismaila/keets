@@ -10,12 +10,10 @@
     >
       <template #top>
         <v-toolbar flat>
-          <v-toolbar-title v-if="!$vuetify.breakpoint.mobile"
-            >Station</v-toolbar-title
-          >
+          <v-toolbar-title0>Station</v-toolbar-title0>
           <v-divider class="mx-4" inset vertical></v-divider>
 
-          <v-spacer v-if="!$vuetify.breakpoint.mobile"></v-spacer>
+          <v-spacer></v-spacer>
           <v-text-field
             v-model="search"
             dense

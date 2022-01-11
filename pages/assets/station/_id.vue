@@ -1,32 +1,27 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col cols="12">
-        <h2>{{ station | get('name') }}</h2>
-        <p class="mt-4">
-          This station is located in Birnin Gwari town and serves the whole of
-          Birnin Gwari and environs.
-        </p>
-      </v-col>
-    </v-row>
+    <h2>{{ station | get('name') }}</h2>
 
-    <div>
+    <div class="mt-4">
       <v-tabs v-model="tab">
         <v-tab>Power Transformer</v-tab>
         <v-tab>Feeders</v-tab>
       </v-tabs>
       <v-tabs-items v-model="tab">
-        <v-tab-item>Power Transformer</v-tab-item>
+        <v-tab-item><power-transformer-tab /></v-tab-item>
         <v-tab-item>Feeders</v-tab-item>
       </v-tabs-items>
     </div>
   </v-container>
 </template>
 <script>
+import PowerTransformerTab from '~/components/station/PowerTransformerTab.vue'
 // import { mapGetters } from 'vuex'
 
 export default {
   name: 'StationDetail',
+  components: { PowerTransformerTab },
+
   data() {
     return {
       tab: [0],

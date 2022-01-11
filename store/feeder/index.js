@@ -70,7 +70,6 @@ export const actions = {
     try {
       context.commit('SET_ERROR')
       const feeder = await this.$axios.$patch(`/feeder/${payload.id}`, payload)
-      console.log(feeder)
       context.commit('UPDATE_FEEDER', feeder)
     } catch ({ response }) {
       // eslint-disable-next-line no-console

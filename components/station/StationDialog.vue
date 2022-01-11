@@ -383,6 +383,7 @@ export default {
       this.loading = false
       // TODO: revisit this
       if (this.station_error) {
+        // eslint-disable-next-line no-console
         console.log(this.station_error_message)
       } else {
         this.close()

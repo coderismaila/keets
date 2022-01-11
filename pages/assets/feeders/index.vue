@@ -37,7 +37,7 @@
 
       <template #[`item.actions`]="{ item }">
         <div class="d-flex">
-          <v-btn icon nuxt :to="`/assets/station/${item.id}`">
+          <v-btn icon nuxt :to="`/assets/feeders/${item.id}`">
             <v-icon small> mdi-eye-outline </v-icon></v-btn
           >
           <v-btn icon @click="editItem({ ...item })">

@@ -8,38 +8,20 @@
       app
     >
       <v-list nav dense>
-        <v-list-item nuxt to="/dashboard">
-          <v-list-item-icon>
-            <v-icon>mdi-home-outline</v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title>Dashboard</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-group
-          v-for="item in items"
-          :key="item.title"
-          v-model="item.active"
-          :prepend-icon="item.icon"
-          no-action
-        >
-          <template #activator>
-            <v-list-item-content>
-              <v-list-item-title v-text="item.title"></v-list-item-title>
-            </v-list-item-content>
-          </template>
-
-          <v-list-item
-            v-for="child in item.items"
-            :key="child.title"
-            nuxt
-            :to="child.to"
-          >
-            <v-list-item-content>
-              <v-list-item-title v-text="child.title"></v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-group>
+        <nav-menu-link
+          title="Dashboard"
+          icon="mdi-home-outline"
+          to="dashboard"
+        />
+        <nav-menu-link
+          title="Manage Users"
+          icon="mdi-account-group"
+          to="users"
+        />
+        <nav-menu-group title="Assets" icon="mdi-transmission-tower">
+          <nav-menu-link title="Stations" to="assets/station"></nav-menu-link>
+          <nav-menu-link title="Feeders" to="assets/feeders"></nav-menu-link>
+        </nav-menu-group>
       </v-list>
       <template #append>
         <div class="pa-2">
@@ -98,8 +80,12 @@
 </template>
 
 <script>
+import NavMenuGroup from '~/components/nav/NavMenuGroup.vue'
+import NavMenuLink from '~/components/nav/NavMenuLink.vue'
 export default {
   name: 'DefaultLayout',
+  components: { NavMenuGroup, NavMenuLink },
+
   data() {
     return {
       drawer: false,

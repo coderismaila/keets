@@ -10,7 +10,7 @@
     >
       <template #top>
         <v-toolbar flat>
-          <v-toolbar-title0>Station</v-toolbar-title0>
+          <v-toolbar-title>Station</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
 
           <v-spacer></v-spacer>

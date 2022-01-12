@@ -34,6 +34,16 @@ export const getters = {
     return state.stations.find((station) => station.id === id)
   },
 
+  getStationFeeders: (state, getters) => (id) => {
+    const feeders = []
+    const stations = getters.getStationById(id)
+
+    stations.powerTransformer.forEach((powertx) =>
+      feeders.push(...powertx.feeder)
+    )
+    return feeders
+  },
+
   stationTableData: (state) => {
     const data = []
     state.stations.forEach((station) => {
@@ -83,7 +93,6 @@ export const actions = {
   },
 
   async updateStation(context, payload) {
-    console.log({ payload })
     try {
       context.commit('SET_ERROR')
       const station = await this.$axios.$patch(
@@ -91,7 +100,6 @@ export const actions = {
         payload
       )
 
-      console.log({ station })
       context.commit('UPDATE_STATION', station)
     } catch ({ response }) {
       // eslint-disable-next-line no-console

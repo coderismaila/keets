@@ -98,10 +98,7 @@
                         label="CapacityKVA"
                       ></v-text-field>
                       <v-text-field
-                        v-model.number="
-                          editedItem.powerTransformer[i].ratedCurrent
-                        "
-                        type="number"
+                        v-model="editedItem.powerTransformer[i].ratedCurrent"
                         outlined
                         dense
                         placeholder="Rated Current(A)"
@@ -120,9 +117,7 @@
                           editedItem.powerTransformer[i].voltageRating ===
                           '132/33KV'
                         "
-                        v-model.number="
-                          editedItem.powerTransformer[i].sourceStationId
-                        "
+                        v-model="editedItem.powerTransformer[i].sourceStationId"
                         :items="filteredSourceStations(i)"
                         item-text="name"
                         item-value="id"
@@ -135,7 +130,7 @@
                           editedItem.powerTransformer[i].voltageRating ===
                           '132/33KV'
                         "
-                        v-model.number="
+                        v-model="
                           editedItem.powerTransformer[i]
                             .sourcePowerTransformerId
                         "
@@ -148,9 +143,7 @@
                       ></v-select>
                       <v-select
                         v-show="editedItem.stationType === 'DISTRIBUTION'"
-                        v-model.number="
-                          editedItem.powerTransformer[i].feeder33kvId
-                        "
+                        v-model="editedItem.powerTransformer[i].feeder33kvId"
                         :items="$store.getters['feeder/get33kvFeeders']"
                         item-text="name"
                         item-value="id"
@@ -242,16 +235,16 @@ export default {
   data() {
     return {
       defaultItem: {
-        name: '',
-        stationType: '',
-        areaOfficeName: '',
+        name: null,
+        stationType: null,
+        areaOfficeName: null,
         powerTransformer: [
           {
-            name: '',
-            capacityKVA: '',
-            voltageRating: '',
-            ratedCurrent: 0,
-            transformerPeakLoadMW: 0,
+            name: null,
+            capacityKVA: null,
+            voltageRating: null,
+            ratedCurrent: null,
+            transformerPeakLoadMW: null,
             sourceStationId: null,
             sourcePowerTransformerId: null,
             feeder33kvId: null,

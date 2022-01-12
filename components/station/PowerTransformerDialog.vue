@@ -50,8 +50,7 @@
               label="Voltage Rating"
             ></v-select>
             <v-text-field
-              v-model.number="editedItem.ratedCurrent"
-              type="number"
+              v-model="editedItem.ratedCurrent"
               outlined
               dense
               label="Rated Current"
@@ -68,7 +67,7 @@
             <v-select
               v-show="editedItem.voltageRating === '132/33KV'"
               v-model="editedItem.sourceStationId"
-              :items="stations"
+              :items="filteredSourceStations"
               :error="station_error"
               :error-messages="station_error_message"
               item-text="name"
@@ -83,7 +82,7 @@
             <v-select
               v-if="editedItem.voltageRating === '132/33KV'"
               v-model="editedItem.sourcePowerTransformerId"
-              :items="powerTransformers"
+              :items="filteredSourcePowerTransformers"
               :error="power_transformer_error"
               :error-messages="power_transformer_error_message"
               item-text="name"
@@ -191,6 +190,22 @@ export default {
       station_error: 'error',
       station_error_message: 'error_message',
     }),
+
+    filteredSourceStations() {
+      if (this.editedItem.voltageRating === '132/33KV') {
+        return this.stations.filter((station) =>
+          station.name.includes('330/132')
+        )
+      }
+      return this.stations.filter((station) => station.name.includes('132/11'))
+    },
+
+    filteredSourcePowerTransformers() {
+      return this.powerTransformers.filter(
+        (powerTransformer) =>
+          powerTransformer.stationId === this.editedItem.sourceStationId
+      )
+    },
 
     formTitle() {
       return this.editedIndex === -1

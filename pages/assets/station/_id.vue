@@ -9,18 +9,19 @@
       </v-tabs>
       <v-tabs-items v-model="tab">
         <v-tab-item><power-transformer-tab /></v-tab-item>
-        <v-tab-item>Feeders</v-tab-item>
+        <v-tab-item><feeder-tab /></v-tab-item>
       </v-tabs-items>
     </div>
   </v-container>
 </template>
 <script>
+import FeederTab from '~/components/station/FeederTab.vue'
 import PowerTransformerTab from '~/components/station/PowerTransformerTab.vue'
 // import { mapGetters } from 'vuex'
 
 export default {
   name: 'StationDetail',
-  components: { PowerTransformerTab },
+  components: { PowerTransformerTab, FeederTab },
 
   data() {
     return {

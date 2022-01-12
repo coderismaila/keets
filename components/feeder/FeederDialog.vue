@@ -211,11 +211,7 @@ export default {
           station.name.includes('132/33')
         )
       } else if (this.editedItem.voltageLevel === 'KV11') {
-        return this.stations.filter(
-          (station) =>
-            station.areaOfficeId === this.editedItem.areaOfficeId &&
-            this.editedItem.voltageLevel === 'KV11'
-        )
+        return this.stations.filter((station) => station.name.includes('33/11'))
       }
       return []
     },
@@ -279,6 +275,7 @@ export default {
       this.loading = false
       // TODO: revisit this
       if (this.feeder_error) {
+        // eslint-disable-next-line no-console
         console.log(this.feeder_error_message)
       } else {
         this.close()

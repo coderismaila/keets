@@ -56,7 +56,7 @@ export default {
           width: '50px',
         },
         {
-          text: 'Capacity',
+          text: 'Capacity(KVA)',
           value: 'capacityKVA',
           align: 'center',
           width: '100px',
@@ -67,12 +67,7 @@ export default {
           align: 'center',
           width: '100px',
         },
-        {
-          text: 'Voltage Rating',
-          value: 'ratedCurrent',
-          align: 'center',
-          width: '100px',
-        },
+
         {
           text: 'Peak Load(MW)',
           value: 'transformerPeakLoadMW',

@@ -112,6 +112,7 @@
               <date-picker
                 :disabled-prop="disabled"
                 :date-prop.sync="formData.birthDate"
+                title="Birth Date"
               />
             </v-col>
 

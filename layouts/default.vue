@@ -13,12 +13,26 @@
           icon="mdi-home-outline"
           to="dashboard"
         />
+
+        <nav-menu-link
+          title="Outages"
+          icon="mdi-lightning-bolt-outline"
+          to="outages"
+        >
+        </nav-menu-link>
+
+        <nav-menu-link
+          title="Load Reading"
+          icon="mdi-lightbulb-on-outline"
+          to="load-reading"
+        />
+
         <nav-menu-link
           title="Manage Users"
           icon="mdi-account-group"
           to="users"
         />
-        <nav-menu-group title="Assets" icon="mdi-transmission-tower">
+        <nav-menu-group title="Manage Assets" icon="mdi-transmission-tower">
           <nav-menu-link title="Stations" to="assets/station"></nav-menu-link>
           <nav-menu-link title="Feeders" to="assets/feeders"></nav-menu-link>
         </nav-menu-group>

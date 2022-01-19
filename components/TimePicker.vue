@@ -3,62 +3,57 @@
     ref="menu"
     v-model="menu"
     :close-on-content-click="false"
-    :return-value.sync="date"
+    :return-value.sync="time"
     transition="scale-transition"
     offset-y
-    min-width="auto"
+    max-width="290px"
+    min-width="290px"
   >
     <template #activator="{ on, attrs }">
       <v-text-field
-        v-model="date"
-        :disabled="disabledProp"
-        dense
+        v-model="time"
         :label="title"
+        prepend-inner-icon="mdi-clock-time-four-outline"
         outlined
-        prepend-inner-icon="mdi-calendar"
+        dense
         readonly
         v-bind="attrs"
         v-on="on"
       ></v-text-field>
     </template>
-    <v-date-picker v-model="date">
+    <v-time-picker v-model="time" full-width format="24hr">
       <v-spacer></v-spacer>
       <v-btn text color="primary" @click="menu = false"> Cancel </v-btn>
-      <v-btn text color="primary" @click="$refs.menu.save(date)"> OK </v-btn>
-    </v-date-picker>
+      <v-btn text color="primary" @click="$refs.menu.save(time)"> OK </v-btn>
+    </v-time-picker>
   </v-menu>
 </template>
 <script>
 export default {
-  name: 'DatePicker',
+  name: 'TimePicker',
   props: {
-    dateProp: {
+    timeProp: {
       type: String,
       default: '',
     },
-    disabledProp: {
-      type: Boolean,
-      default: true,
-    },
     title: {
       type: String,
-      default: 'Date',
+      default: 'Time',
     },
   },
-
   data() {
     return {
       menu: false,
-      modal: false,
     }
   },
+
   computed: {
-    date: {
+    time: {
       get() {
-        return this.$dayjs(new Date(this.dateProp)).format('YYYY-MM-DD')
+        return this.timeProp
       },
-      set(dateProp) {
-        this.$emit('update:dateProp', dateProp)
+      set(timeProp) {
+        this.$emit('update:timeProp', timeProp)
       },
     },
   },

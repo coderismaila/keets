@@ -50,7 +50,7 @@
                 label="Email*"
               ></v-text-field>
             </v-col>
-            <v-col cols="12" class="py-0">
+            <v-col v-if="editedItem > -1" cols="12" class="py-0">
               <v-text-field
                 v-model="editedItem.password"
                 type="text"
@@ -147,6 +147,7 @@
               <date-picker
                 :disabled-prop="disabled"
                 :date-prop.sync="editedItem.birthDate"
+                title="Birth Date"
               />
             </v-col>
 
@@ -197,8 +198,8 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn small tile @click="close"> Cancel </v-btn>
-        <v-btn small tile color="primary" :loading="loading" @click="save">
+        <v-btn @click="close"> Cancel </v-btn>
+        <v-btn color="primary" :loading="loading" @click="save">
           {{ buttonText }}
         </v-btn>
       </v-card-actions>
@@ -321,6 +322,7 @@ export default {
       if (this.editedIndex > -1) {
         await this.updateUser(this.editedItem)
       } else {
+        this.editedItem.password = 'Kaduna@123456'
         await this.addUser(this.editedItem)
       }
       this.loading = false

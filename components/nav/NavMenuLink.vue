@@ -1,5 +1,5 @@
 <template>
-  <v-list-item nuxt :to="`/${to}`" color="black" active-class="primary--light">
+  <v-list-item nuxt :to="`/${to}`">
     <v-list-item-icon>
       <v-icon :x-small="!icon" class="mx-auto">
         {{ icon || alternateIcon }}

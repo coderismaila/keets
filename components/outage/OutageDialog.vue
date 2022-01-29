@@ -122,7 +122,12 @@
         <v-card flat class="mt-4 mb-12">
           <v-form>
             <datetime-picker
-              v-model="editedItem.TimeIn"
+              v-model="editedItem.tagOutTime"
+              label="Tag Out Time"
+            ></datetime-picker>
+
+            <datetime-picker
+              v-model="editedItem.timeIn"
               label="Time In"
             ></datetime-picker>
 
@@ -148,7 +153,7 @@
             />
           </v-form>
         </v-card>
-        <v-btn color="primary" @click="update">Save</v-btn>
+        <v-btn color="primary" @click="surrenderTag">Save</v-btn>
         <v-btn @click="close">Cancel</v-btn>
       </v-stepper-content>
     </v-stepper>
@@ -308,8 +313,8 @@ export default {
         return
       }
 
-      this.stepper = 3
       this.loading = false
+      this.close()
     },
 
     close() {

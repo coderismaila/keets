@@ -51,15 +51,60 @@
         {{ item.timeIn | formatTime }}
       </template>
 
+      <template #[`item.status`]="{ item }">
+        <v-badge
+          class="badgee"
+          :color="item.timeIn ? 'green' : item.tagInTime ? 'yellow' : 'red'"
+        >
+        </v-badge>
+      </template>
+
       <template #[`item.actions`]="{ item }">
-        <div class="d-flex">
-          <v-btn icon @click="editItem(item)"
-            ><v-icon small> mdi-tag-outline </v-icon></v-btn
-          >
-          <v-btn icon nuxt :to="`/users/${item.id}`">
-            <v-icon small> mdi-eye-outline</v-icon></v-btn
-          >
-        </div>
+        <v-menu>
+          <template #activator="{ on, attrs }">
+            <v-btn dark icon v-bind="attrs" v-on="on">
+              <v-icon small color="secondary">mdi-dots-vertical</v-icon>
+            </v-btn>
+          </template>
+          <v-list class="">
+            <v-list-item>
+              <v-tooltip left>
+                <template #activator="{ on, attrs }">
+                  <v-btn icon text v-bind="attrs" v-on="on"
+                    ><v-icon small> mdi-eye-outline </v-icon>
+                  </v-btn>
+                </template>
+                <span>view details</span>
+              </v-tooltip>
+            </v-list-item>
+            <v-list-item>
+              <v-tooltip left>
+                <template #activator="{ on, attrs }">
+                  <v-btn
+                    icon
+                    text
+                    v-bind="attrs"
+                    v-on="on"
+                    @click="editItem(item)"
+                    ><v-icon small> mdi-tag-outline </v-icon></v-btn
+                  >
+                </template>
+                <span>add tag</span>
+              </v-tooltip>
+            </v-list-item>
+            <v-list-item>
+              <v-tooltip left>
+                <template #activator="{ on, attrs }">
+                  <v-btn icon text v-bind="attrs" v-on="on">
+                    <v-icon small> mdi-clock-outline</v-icon>
+                  </v-btn>
+                </template>
+                <span>surrender tag</span>
+              </v-tooltip>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+        <div class="d-flex"></div>
       </template>
     </v-data-table>
   </v-container>
@@ -93,7 +138,8 @@ export default {
         staffNameTCN: '',
       },
       headers: [
-        { text: 'Outage ID', value: 'id', width: '50px', sortable: false },
+        { text: 'Actions', value: 'actions', sortable: false, align: 'center' },
+        { text: 'Status', value: 'status', sortable: false, align: 'center' },
         {
           text: 'Area Office',
           value: 'feeder.areaOffice.name',
@@ -114,7 +160,12 @@ export default {
         },
         { text: 'Time Out', value: 'timeOut', width: '140px' },
         { text: 'Time In', value: 'timeIn', width: '140px' },
-        { text: 'Load Loss', value: 'loadLoss', width: '80px' },
+        {
+          text: 'Load Loss(MW)',
+          value: 'loadLoss',
+          width: '100px',
+          sortable: false,
+        },
         { text: 'Cause', value: 'cause', width: '180px', sortable: false },
         {
           text: 'resolution',
@@ -130,7 +181,6 @@ export default {
         { text: 'Tag Out Time.', value: 'tagOutTime', width: '150px' },
         { text: 'Updated By', value: 'staff.name', width: '150px' },
         { text: 'Updated At', value: 'updatedAt', width: '140px' },
-        { text: 'Actions', value: 'actions', sortable: false, width: '100px' },
       ],
     }
   },

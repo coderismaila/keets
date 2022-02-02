@@ -109,6 +109,20 @@
               ></v-select>
             </v-col>
             <v-col cols="12">
+              <v-select
+                v-model="formData.stationId"
+                :items="$store.state.station.stations"
+                item-text="name"
+                item-value="id"
+                :disabled="disabled"
+                cache-items
+                label="Station"
+                outlined
+                dense
+                :loading="loading"
+              ></v-select>
+            </v-col>
+            <v-col cols="12">
               <date-picker
                 :disabled-prop="disabled"
                 :date-prop.sync="formData.birthDate"
@@ -198,6 +212,7 @@ export default {
         areaOfficeId: '',
         designation: '',
         jobDescriptionId: '',
+        stationId: '',
         birthDate: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
           .toISOString()
           .substr(0, 10),
@@ -220,6 +235,7 @@ export default {
   async fetch() {
     await this.$store.dispatch('areaoffice/getAllAreaOffices')
     await this.$store.dispatch('jobdescription/getAlljobDescriptions')
+    await this.$store.dispatch('station/getAllStations')
   },
 
   computed: {

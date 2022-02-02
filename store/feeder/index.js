@@ -35,6 +35,12 @@ export const getters = {
   get33kvFeeders: (state) => {
     return state.feeders.filter((feeder) => feeder.voltageLevel === 'KV33')
   },
+
+  getUserStationFeeders: (state, getters, rootState) => {
+    return state.feeders.filter(
+      (feeder) => feeder.stationId === rootState.auth.user.stationId
+    )
+  },
 }
 
 // action

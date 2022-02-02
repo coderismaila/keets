@@ -76,6 +76,7 @@ export default {
         designation: '',
         areaOfficeId: '',
         jobDescriptionId: '',
+        stationId: null,
         phoneNumber: '',
         gender: '',
         birthDate: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
@@ -95,7 +96,12 @@ export default {
         { text: 'Username', value: 'username', width: '150px' },
         { text: 'Email', value: 'email', width: '150px' },
         { text: 'Area Office', value: 'areaOffice.name', width: '120px' },
-        { text: 'Designation', value: 'designation', width: '100px' },
+        {
+          text: 'Designation',
+          value: 'designation',
+          width: '100px',
+          sortable: false,
+        },
         { text: 'Role', value: 'role', width: '100px' },
         { text: 'Actions', value: 'actions', sortable: false, width: '80px' },
       ],
@@ -104,6 +110,7 @@ export default {
 
   async fetch() {
     await this.$store.dispatch('user/getAllUsers')
+    await this.$store.dispatch('station/getAllStations')
     await this.$store.dispatch('areaoffice/getAllAreaOffices')
     await this.$store.dispatch('jobdescription/getAlljobDescriptions')
   },

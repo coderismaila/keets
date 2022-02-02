@@ -129,6 +129,18 @@
               ></v-select>
             </v-col>
 
+            <v-col cols="12" class="py-0">
+              <v-combobox
+                v-model="editedItem.stationId"
+                :items="$store.state.station.stations"
+                item-text="name"
+                item-value="id"
+                outlined
+                dense
+                label="Station*"
+              ></v-combobox>
+            </v-col>
+
             <v-col cols="12" class="pb-0">
               <v-text-field
                 v-model="editedItem.phoneNumber"
@@ -240,6 +252,7 @@ export default {
         designation: '',
         areaOfficeId: '',
         jobDescriptionId: '',
+        stationId: null,
         phoneNumber: '',
         gender: '',
         birthDate: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)

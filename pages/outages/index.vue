@@ -2,7 +2,7 @@
   <v-container>
     <v-data-table
       :headers="headers"
-      :items="outages"
+      :items="stationOutages"
       mobile-breakpoint="0"
       :items-per-page="10"
       :loading="$fetchState.pending"
@@ -187,11 +187,12 @@ export default {
 
   async fetch() {
     await this.$store.dispatch('outage/getAllOutages')
+    await this.$store.dispatch('outage/getAllStationOutages')
     await this.$store.dispatch('feeder/getAllFeeders')
   },
 
   computed: {
-    ...mapState('outage', ['outages']),
+    ...mapState('outage', ['outages', 'stationOutages']),
     ...mapState('feeder', ['feeders']),
   },
 

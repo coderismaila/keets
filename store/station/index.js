@@ -80,7 +80,6 @@ export const actions = {
   async addStation(context, payload) {
     try {
       context.commit('SET_ERROR')
-      console.log(payload)
       const category = await this.$axios.$post('/station', payload)
       context.commit('ADD_STATION', category)
     } catch ({ response }) {

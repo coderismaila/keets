@@ -14,7 +14,7 @@
       </v-btn>
     </template>
     <v-stepper v-model="stepper" vertical>
-      <v-sheet>
+      <v-sheet class="pl-8 pr-6 pt-4">
         <v-alert v-if="outage_error" type="error" dismissible>{{
           outage_error_message
         }}</v-alert>
@@ -24,12 +24,12 @@
         Record an Outage
       </v-stepper-step>
       <v-stepper-content step="1">
-        <v-card flat class="mt-4 mb-12">
+        <v-card flat class="mt-4">
           <v-form>
             <v-select
               v-model="editedItem.feederId"
               label="Feeder Name"
-              :items="feeders"
+              :items="getUserStationFeeders"
               item-text="name"
               item-value="id"
               outlined
@@ -68,11 +68,16 @@
               dense
             />
           </v-form>
+
+          <v-card-actions class="pa-0">
+            <div class="d-flex">
+              <v-btn color="primary" :loading="loading" @click="save"
+                >Save</v-btn
+              >
+              <v-btn class="ml-2" @click="close">Cancel</v-btn>
+            </div>
+          </v-card-actions>
         </v-card>
-        <div class="d-flex">
-          <v-btn color="primary" :loading="loading" @click="save">Save</v-btn>
-          <v-btn class="ml-2" @click="close">Cancel</v-btn>
-        </div>
       </v-stepper-content>
 
       <v-stepper-step step="2" :complete="stepper > 2">
@@ -161,7 +166,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 
 export default {
   name: 'OutageDialog',
@@ -227,6 +232,8 @@ export default {
     }),
     ...mapState('feeder', ['feeders']),
 
+    ...mapGetters('feeder', ['getUserStationFeeders']),
+
     dialog: {
       get() {
         return this.dialogProp
@@ -275,7 +282,7 @@ export default {
       this.loading = true
       this.editedItem.staffId = this.$auth.user.id
       const outage = await this.addOutage(this.editedItem)
-      this.editedItem.id = outage.id
+      this.editedItem.id = outage?.id
 
       if (this.outage_error) {
         this.loading = false

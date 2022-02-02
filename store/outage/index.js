@@ -1,6 +1,7 @@
 // state
 export const state = () => ({
   outages: [],
+  stationOutages: [],
   error: false,
   error_message: '',
 })
@@ -9,6 +10,10 @@ export const state = () => ({
 export const mutations = {
   SET_OUTAGES(state, payload) {
     state.outages = payload
+  },
+
+  SET_STATION_OUTAGES(state, payload) {
+    state.stationOutages = payload
   },
   ADD_OUTAGE(state, payload) {
     state.outages.push(payload)
@@ -40,6 +45,19 @@ export const actions = {
       context.commit('SET_ERROR')
       const outages = await this.$axios.$get('/outage')
       context.commit('SET_OUTAGES', outages)
+    } catch ({ response }) {
+      context.commit('SET_ERROR', {
+        error: true,
+        message: response.data.message,
+      })
+    }
+  },
+
+  async getAllStationOutages(context) {
+    try {
+      context.commit('SET_ERROR')
+      const outages = await this.$axios.$get('/outage/station')
+      context.commit('SET_STATION_OUTAGES', outages)
     } catch ({ response }) {
       context.commit('SET_ERROR', {
         error: true,

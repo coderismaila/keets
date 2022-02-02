@@ -37,7 +37,7 @@
               ></v-text-field>
             </v-col>
 
-            <v-col cols="12">
+            <!-- <v-col cols="12">
               <v-select
                 v-model="formData.role"
                 dense
@@ -47,7 +47,7 @@
                 label="Role"
                 :items="roles"
               ></v-select>
-            </v-col>
+            </v-col> -->
           </v-row>
         </v-form>
       </v-card-text>

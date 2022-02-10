@@ -36,6 +36,12 @@
           <nav-menu-link title="Stations" to="assets/station"></nav-menu-link>
           <nav-menu-link title="Feeders" to="assets/feeders"></nav-menu-link>
         </nav-menu-group>
+        <nav-menu-group title="Reports" icon="mdi-file-excel-outline">
+          <nav-menu-link
+            title="Outage Report"
+            to="outages-report"
+          ></nav-menu-link>
+        </nav-menu-group>
       </v-list>
       <template #append>
         <div class="pa-2">

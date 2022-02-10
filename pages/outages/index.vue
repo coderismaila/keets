@@ -2,7 +2,7 @@
   <v-container>
     <v-data-table
       :headers="headers"
-      :items="stationOutages"
+      :items="getAllUserStationOutages"
       mobile-breakpoint="0"
       :items-per-page="10"
       :loading="$fetchState.pending"
@@ -11,7 +11,6 @@
         <v-toolbar flat class="table-header">
           <v-toolbar-title>Outage</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
-
           <v-spacer></v-spacer>
           <v-text-field
             v-model="search"
@@ -24,12 +23,7 @@
             class="mx-4 max-w-sm pl-0"
           ></v-text-field>
           <!-- User Dialog -->
-          <outage-dialog
-            :dialog-prop.sync="dialog"
-            :edited-item-prop.sync="editedItem"
-            :edited-index-prop.sync="editedIndex"
-            :stepper-prop.sync="stepper"
-          />
+          <add-outage />
         </v-toolbar>
       </template>
       <template #[`item.timeOut`]="{ item }">
@@ -111,10 +105,13 @@
 </template>
 <script>
 import { isEqual } from 'lodash'
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
+import AddOutage from '~/components/outage/AddOutageDialog.vue'
 
 export default {
   name: 'OutagePage',
+  components: { AddOutage },
+
   data() {
     return {
       search: '',
@@ -194,6 +191,8 @@ export default {
   computed: {
     ...mapState('outage', ['outages', 'stationOutages']),
     ...mapState('feeder', ['feeders']),
+
+    ...mapGetters('outage', ['getAllUserStationOutages']),
   },
 
   methods: {

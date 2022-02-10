@@ -1,7 +1,6 @@
 // state
 export const state = () => ({
   outages: [],
-  stationOutages: [],
   error: false,
   error_message: '',
 })
@@ -12,9 +11,6 @@ export const mutations = {
     state.outages = payload
   },
 
-  SET_STATION_OUTAGES(state, payload) {
-    state.stationOutages = payload
-  },
   ADD_OUTAGE(state, payload) {
     state.outages.push(payload)
   },
@@ -36,6 +32,12 @@ export const getters = {
   getOutageById: (state) => (id) => {
     return state.outages.find((outage) => outage.id === id)
   },
+
+  getAllUserStationOutages: (state, getters, rootState) => {
+    return state.outages.filter(
+      (outage) => outage.feeder.stationId === rootState.auth.user.stationId
+    )
+  },
 }
 
 // action
@@ -45,19 +47,6 @@ export const actions = {
       context.commit('SET_ERROR')
       const outages = await this.$axios.$get('/outage')
       context.commit('SET_OUTAGES', outages)
-    } catch ({ response }) {
-      context.commit('SET_ERROR', {
-        error: true,
-        message: response.data.message,
-      })
-    }
-  },
-
-  async getAllStationOutages(context) {
-    try {
-      context.commit('SET_ERROR')
-      const outages = await this.$axios.$get('/outage/station')
-      context.commit('SET_STATION_OUTAGES', outages)
     } catch ({ response }) {
       context.commit('SET_ERROR', {
         error: true,

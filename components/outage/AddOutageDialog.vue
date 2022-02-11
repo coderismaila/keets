@@ -19,7 +19,7 @@
         <v-alert type="error">{{ outage_error_message }}</v-alert>
       </v-card-text>
       <v-card-text>
-        <v-form>
+        <v-form ref="form" v-model="valid" lazy-validation>
           <v-select
             v-model="editedItem.feederId"
             label="Feeder Name"
@@ -28,6 +28,7 @@
             item-value="id"
             outlined
             dense
+            :rules="[required]"
           />
           <v-select
             v-model="editedItem.outageType"
@@ -37,11 +38,13 @@
             item-value="value"
             outlined
             dense
+            :rules="[required]"
           />
 
           <datetime-picker
             v-model="editedItem.timeOut"
             label="Time Out"
+            :text-field-props="{ rules: [required, futureDate] }"
           ></datetime-picker>
 
           <v-select
@@ -51,6 +54,7 @@
             :items="relayIndications"
             item-text="text"
             item-value="value"
+            :rules="[required]"
             dense
           />
           <v-text-field
@@ -65,7 +69,13 @@
       </v-card-text>
       <v-card-actions>
         <div class="d-flex">
-          <v-btn color="primary" :loading="loading" @click="save">Save</v-btn>
+          <v-btn
+            color="primary"
+            :loading="loading"
+            :disabled="!valid"
+            @click="save"
+            >Save</v-btn
+          >
           <v-btn class="ml-2" @click="close">Cancel</v-btn>
         </div>
       </v-card-actions>
@@ -74,11 +84,15 @@
 </template>
 <script>
 import { mapActions, mapGetters, mapState } from 'vuex'
+import rules from '../../mixins/rules'
+
 export default {
   name: 'AddOutage',
+  mixins: [rules],
   data() {
     return {
       dialog: false,
+      valid: true,
       loading: false,
       editedItem: {
         feederId: null,
@@ -106,6 +120,7 @@ export default {
         { text: 'O/C', value: 'O_C' },
         { text: 'E/F', value: 'E_F' },
         { text: 'O/C & E/F', value: 'OC_EF' },
+        { text: 'No Relay Indication', value: 'NO_RELAY' },
       ],
     }
   },
@@ -131,6 +146,8 @@ export default {
     ...mapActions('outage', ['addOutage', 'updateOutage']),
 
     async save() {
+      if (!this.$refs.form.validate()) return
+
       this.loading = true
       this.editedItem.staffId = this.$auth.user.id
       await this.addOutage(this.editedItem)
@@ -140,6 +157,7 @@ export default {
         return
       }
       this.loading = false
+      this.close()
     },
 
     close() {
@@ -147,7 +165,7 @@ export default {
       this.$store.commit('outage/SET_ERROR')
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
-        this.stepper = 1
+        this.$refs.form.reset()
       })
     },
   },

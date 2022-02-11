@@ -184,7 +184,6 @@ export default {
 
   async fetch() {
     await this.$store.dispatch('outage/getAllOutages')
-    await this.$store.dispatch('outage/getAllStationOutages')
     await this.$store.dispatch('feeder/getAllFeeders')
   },
 

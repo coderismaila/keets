@@ -39,7 +39,7 @@
         <nav-menu-group title="Reports" icon="mdi-file-excel-outline">
           <nav-menu-link
             title="Outage Report"
-            to="outages-report"
+            to="reports/outage"
           ></nav-menu-link>
         </nav-menu-group>
       </v-list>

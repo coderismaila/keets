@@ -3,9 +3,9 @@
     <v-data-table
       :headers="headers"
       :items="getAllUserStationOutages"
-      mobile-breakpoint="0"
-      :items-per-page="10"
+      :items-per-page="50"
       :loading="$fetchState.pending"
+      mobile-breakpoint="0"
     >
       <template #top>
         <v-toolbar flat class="table-header">
@@ -64,17 +64,23 @@
             <v-list-item>
               <v-tooltip left>
                 <template #activator="{ on, attrs }">
-                  <v-btn icon text v-bind="attrs" v-on="on"
+                  <v-btn
+                    icon
+                    text
+                    link
+                    :to="`outages/${item.id}`"
+                    v-bind="attrs"
+                    v-on="on"
                     ><v-icon small> mdi-eye-outline </v-icon>
                   </v-btn>
                 </template>
                 <span>view details</span>
               </v-tooltip>
             </v-list-item>
-            <v-list-item>
+            <v-list-item v-if="!item.tagNumber">
               <add-tag :item="item" />
             </v-list-item>
-            <v-list-item>
+            <v-list-item v-if="!item.tagOutTime">
               <surrender-tag :item="item" />
             </v-list-item>
           </v-list>
@@ -98,23 +104,6 @@ export default {
     return {
       search: '',
       dialog: false,
-      editedIndex: -1,
-      editedItem: {
-        feederId: '',
-        timeOut: null,
-        timeIn: null,
-        outageType: '',
-        relayIndication: '',
-        loadLoss: 0,
-        tagNumber: null,
-        tagHolderId: null,
-        thirdPartyName: '',
-        tagInTime: null,
-        tagOutTime: null,
-        cause: '',
-        resolution: '',
-        staffNameTCN: '',
-      },
       headers: [
         { text: 'Actions', value: 'actions', sortable: false, align: 'center' },
         { text: 'Status', value: 'status', sortable: false, align: 'center' },

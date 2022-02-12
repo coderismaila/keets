@@ -75,14 +75,7 @@
               <add-tag :item="item" />
             </v-list-item>
             <v-list-item>
-              <v-tooltip left>
-                <template #activator="{ on, attrs }">
-                  <v-btn icon text v-bind="attrs" v-on="on">
-                    <v-icon small> mdi-clock-outline</v-icon>
-                  </v-btn>
-                </template>
-                <span>surrender tag</span>
-              </v-tooltip>
+              <surrender-tag :item="item" />
             </v-list-item>
           </v-list>
         </v-menu>
@@ -92,14 +85,14 @@
   </v-container>
 </template>
 <script>
-import { isEqual } from 'lodash'
 import { mapActions, mapGetters, mapState } from 'vuex'
 import AddOutage from '~/components/outage/AddOutageDialog.vue'
 import AddTag from '~/components/outage/AddTagDialog.vue'
+import SurrenderTag from '~/components/outage/SurrenderTagDialog.vue'
 
 export default {
   name: 'OutagePage',
-  components: { AddOutage, AddTag },
+  components: { AddOutage, AddTag, SurrenderTag },
 
   data() {
     return {
@@ -174,20 +167,6 @@ export default {
 
   methods: {
     ...mapActions('outage', ['addOutage', 'updateOutage']),
-
-    findIndex(array, item) {
-      for (let i = 0; i < array.length; i++) {
-        if (isEqual(array[i], item)) return i
-      }
-      return -1
-    },
-
-    editItem(item) {
-      this.stepper = 2
-      this.editedIndex = this.findIndex(this.outages, item)
-      this.editedItem = Object.assign({}, item)
-      this.dialog = true
-    },
   },
 }
 </script>

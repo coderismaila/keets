@@ -34,7 +34,7 @@ export default {
   props: {
     dateProp: {
       type: String,
-      default: '',
+      default: new Date(),
     },
     disabledProp: {
       type: Boolean,
@@ -55,10 +55,10 @@ export default {
   computed: {
     date: {
       get() {
-        return this.$dayjs(new Date(this.dateProp)).format('YYYY-MM-DD')
+        return this.$dayjs(this.dateProp).format('YYYY-MM-DD')
       },
       set(dateProp) {
-        this.$emit('update:dateProp', dateProp)
+        this.$emit('update:dateProp', this.$dayjs(dateProp).toISOString())
       },
     },
   },

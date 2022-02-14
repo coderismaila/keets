@@ -1,66 +1,69 @@
 <template>
   <v-container class="mt-8">
-    <v-row justify="center" align="center">
-      <v-col cols="12" md="6" sm="8">
-        <v-card class="pa-8">
-          <v-card-title class="headline justify-center"
-            >Create an Account</v-card-title
-          >
-          <v-alert v-if="error" type="error" dismissible>
-            {{ error_message }}
-          </v-alert>
-          <v-form ref="form" v-model="valid" lazy-validation class="mt-8">
-            <v-text-field
-              v-model="formData.username"
-              outlined
-              placeholder="Username"
-              prepend-inner-icon="mdi-account"
-              :rules="[required, min4]"
-            />
-            <v-text-field
-              v-model="formData.staffId"
-              type="number"
-              outlined
-              placeholder="Staff ID"
-              prepend-inner-icon="mdi-numeric"
-              :rules="[required, min4, max6]"
-            />
-            <v-text-field
-              v-model="formData.email"
-              type="email"
-              outlined
-              placeholder="Email"
-              prepend-inner-icon="mdi-email"
-              :rules="[required, email]"
-            />
-            <v-text-field
-              v-model="formData.password"
-              outlined
-              placeholder="Password"
-              :type="hidePassword ? 'password' : 'text'"
-              prepend-inner-icon="mdi-lock"
-              :append-icon="hidePassword ? 'mdi-eye' : 'mdi-eye-off'"
-              :rules="[required, min8]"
-              @click:append="() => (hidePassword = !hidePassword)"
-            />
-            <v-btn
-              type="submit"
-              color="primary"
-              block
-              large
-              :disabled="!valid"
-              :loading="loading"
-              @click.prevent="handleSubmit"
-              >sign up</v-btn
-            >
-            <p class="mt-4 text-center">
-              Already have an account?
-              <nuxt-link to="/auth/signin">Sign in </nuxt-link>
-            </p>
-          </v-form>
-        </v-card>
-      </v-col>
-    </v-row>
+    <v-card shaped width="450px" class="pa-12 mx-auto">
+      <nuxt-link to="/">
+        <v-img
+          src="/images/logo.png"
+          height="50px"
+          width="50px"
+          class="d-block mx-auto"
+        ></v-img>
+      </nuxt-link>
+      <v-card-title class="headline justify-center"
+        >Create an Account</v-card-title
+      >
+      <v-alert v-if="error" type="error" dismissible>
+        {{ error_message }}
+      </v-alert>
+      <v-form ref="form" v-model="valid" lazy-validation class="mt-8">
+        <v-text-field
+          v-model="formData.username"
+          outlined
+          placeholder="Username"
+          prepend-inner-icon="mdi-account"
+          :rules="[required, min4]"
+        />
+        <v-text-field
+          v-model="formData.staffId"
+          outlined
+          placeholder="Staff ID"
+          prepend-inner-icon="mdi-numeric"
+          :rules="[required, min4, max6]"
+        />
+        <v-text-field
+          v-model="formData.email"
+          type="email"
+          outlined
+          placeholder="Email"
+          prepend-inner-icon="mdi-email"
+          :rules="[required, email]"
+        />
+        <v-text-field
+          v-model="formData.password"
+          outlined
+          placeholder="Password"
+          :type="hidePassword ? 'password' : 'text'"
+          prepend-inner-icon="mdi-lock"
+          :append-icon="hidePassword ? 'mdi-eye' : 'mdi-eye-off'"
+          :rules="[required, min8]"
+          @click:append="() => (hidePassword = !hidePassword)"
+        />
+        <v-btn
+          type="submit"
+          color="primary"
+          x-large
+          block
+          :disabled="!valid"
+          :loading="loading"
+          @click.prevent="handleSubmit"
+          >sign up</v-btn
+        >
+        <p class="mt-4 text-center">
+          Already have an account?
+          <nuxt-link to="/auth/signin">Sign in </nuxt-link>
+        </p>
+      </v-form>
+    </v-card>
   </v-container>
 </template>
 <script>

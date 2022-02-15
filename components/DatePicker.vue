@@ -8,16 +8,14 @@
     offset-y
     min-width="auto"
   >
-    <template #activator="{ on, attrs }">
+    <template #activator="{ on }">
       <v-text-field
         v-model="date"
-        :disabled="disabledProp"
-        dense
         :label="title"
         outlined
         prepend-inner-icon="mdi-calendar"
         readonly
-        v-bind="attrs"
+        v-bind="textFieldProps"
         v-on="on"
       ></v-text-field>
     </template>
@@ -36,13 +34,13 @@ export default {
       type: String,
       default: new Date(),
     },
-    disabledProp: {
-      type: Boolean,
-      default: true,
-    },
     title: {
       type: String,
       default: 'Date',
+    },
+    // eslint-disable-next-line vue/require-default-prop
+    textFieldProps: {
+      type: Object,
     },
   },
 

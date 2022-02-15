@@ -124,8 +124,8 @@
             </v-col>
             <v-col cols="12">
               <date-picker
-                :disabled-prop="disabled"
                 :date-prop.sync="formData.birthDate"
+                :text-field-props="{ disabled: disabled, dense: true }"
                 title="Birth Date"
               />
             </v-col>

@@ -44,10 +44,10 @@
           @click.prevent="handleSubmit"
           >sign in</v-btn
         >
-        <p class="mt-4 text-center">
+        <v-card-text class="mt-4 text-center">
           Don't have an account?
           <nuxt-link to="/auth/signup">Sign Up </nuxt-link>
-        </p>
+        </v-card-text>
       </v-form>
     </v-card>
   </v-container>
@@ -96,12 +96,12 @@ export default {
   },
 }
 </script>
-<style scoped>
-a {
+<style>
+/* a {
   text-decoration: none;
 }
 
 a:hover {
   text-decoration: underline;
-}
+} */
 </style>

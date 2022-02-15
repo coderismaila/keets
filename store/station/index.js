@@ -80,8 +80,8 @@ export const actions = {
   async addStation(context, payload) {
     try {
       context.commit('SET_ERROR')
-      const category = await this.$axios.$post('/station', payload)
-      context.commit('ADD_STATION', category)
+      const station = await this.$axios.$post('/station', payload)
+      context.commit('ADD_STATION', station)
     } catch ({ response }) {
       // eslint-disable-next-line no-console
       console.log('response error', response.data)

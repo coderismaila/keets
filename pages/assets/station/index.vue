@@ -68,32 +68,32 @@ export default {
       dialog: false,
       editedIndex: -1,
       editedItem: {
-        name: '',
-        stationType: '',
-        areaOfficeName: '',
+        name: null,
+        stationType: null,
+        areaOfficeName: null,
         powerTransformer: [
           {
-            name: '',
+            name: null,
             capacityKVA: 0,
-            voltageRating: '',
-            ratedCurrent: '',
-            transformerPeakLoadMW: '',
+            voltageRating: null,
+            ratedCurrent: null,
+            transformerPeakLoadMW: 0,
             sourcePowerTransformerId: null,
             feeder33kvId: null,
           },
         ],
       },
       defaultItem: {
-        name: '',
-        stationType: '',
-        areaOfficeName: '',
+        name: null,
+        stationType: null,
+        areaOfficeName: null,
         powerTransformer: [
           {
-            name: '',
-            capacityKVA: '',
-            voltageRating: '',
-            ratedCurrent: '',
-            transformerPeakLoadMW: '',
+            name: null,
+            capacityKVA: null,
+            voltageRating: null,
+            ratedCurrent: null,
+            transformerPeakLoadMW: 0,
             sourceStationId: null,
             sourcePowerTransformerId: null,
             feeder33kvId: null,
@@ -117,10 +117,12 @@ export default {
     }
   },
   async fetch() {
-    await this.$store.dispatch('station/getAllStations')
-    await this.$store.dispatch('areaoffice/getAllAreaOffices')
-    await this.$store.dispatch('power-transformer/getAllPowerTransformers')
-    await this.$store.dispatch('feeder/getAllFeeders')
+    await Promise.all([
+      this.$store.dispatch('station/getAllStations'),
+      this.$store.dispatch('areaoffice/getAllAreaOffices'),
+      this.$store.dispatch('power-transformer/getAllPowerTransformers'),
+      this.$store.dispatch('feeder/getAllFeeders'),
+    ])
   },
 
   computed: {
@@ -128,8 +130,23 @@ export default {
     ...mapGetters('station', ['stationTableData']),
   },
 
+  watch: {
+    dialog(val) {
+      val || this.close()
+    },
+  },
+
   methods: {
     ...mapActions('station', ['deleteStation']),
+
+    close() {
+      this.dialog = false
+      this.$store.commit('station/SET_ERROR')
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem)
+        this.editedIndex = -1
+      })
+    },
 
     findIndex(array, item) {
       for (let i = 0; i < array.length; i++) {

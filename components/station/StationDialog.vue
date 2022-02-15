@@ -18,11 +18,12 @@
       <v-card-title>
         <span class="text-h5">{{ formTitle }}</span>
       </v-card-title>
+      <v-card-text></v-card-text>
+      <v-alert v-if="station_error" dense type="error" dismissible>{{
+        station_error_message
+      }}</v-alert>
       <v-card-text>
-        <v-container>
-          <v-alert v-if="station_error" dense type="error" dismissible>{{
-            station_error_message
-          }}</v-alert>
+        <v-form ref="form" v-model="valid" lazy-validation>
           <v-row>
             <v-col cols="12" class="pb-0">
               <v-text-field
@@ -30,6 +31,7 @@
                 outlined
                 dense
                 label="Station Name"
+                :rules="[required]"
               ></v-text-field>
             </v-col>
             <v-col cols="12" class="py-0">
@@ -42,12 +44,18 @@
                 label="Area Office"
                 outlined
                 dense
+                :rules="[required]"
                 :loading="loading"
               ></v-combobox>
             </v-col>
             <v-col cols="12" class="py-0">
               <p class="my-0">Station Type</p>
-              <v-radio-group v-model="editedItem.stationType" row class="my-0">
+              <v-radio-group
+                v-model="editedItem.stationType"
+                row
+                class="my-0"
+                :rules="[required]"
+              >
                 <v-radio label="Transmission" value="TRANSMISSION"></v-radio>
                 <v-radio label="Distribution" value="DISTRIBUTION"></v-radio>
               </v-radio-group>
@@ -56,7 +64,7 @@
           <v-divider v-show="editedIndex === -1" />
           <v-row class="pt-4">
             <v-expansion-panels
-              v-show="editedIndex === -1"
+              v-if="editedIndex === -1"
               v-model="panel"
               flat
               class="elevation-0"
@@ -78,6 +86,7 @@
                         outlined
                         dense
                         label="Transformer Name"
+                        :rules="[required]"
                       ></v-text-field>
                       <v-select
                         v-model="editedItem.powerTransformer[i].voltageRating"
@@ -87,6 +96,7 @@
                         outlined
                         dense
                         label="Voltage Rating"
+                        :rules="[required]"
                       ></v-select>
                       <v-text-field
                         v-model.number="
@@ -96,24 +106,25 @@
                         outlined
                         dense
                         label="CapacityKVA"
+                        :rules="[required]"
                       ></v-text-field>
                       <v-text-field
                         v-model="editedItem.powerTransformer[i].ratedCurrent"
                         outlined
                         dense
-                        placeholder="Rated Current(A)"
+                        label="Rated Current(A)(optional)"
                       ></v-text-field>
                       <v-text-field
-                        v-model.number="
+                        v-model="
                           editedItem.powerTransformer[i].transformerPeakLoadMW
                         "
                         type="number"
                         outlined
                         dense
-                        placeholder="Transformer Peak Load(MW)"
+                        label="Transformer Peak Load(MW)"
                       ></v-text-field>
                       <v-select
-                        v-show="
+                        v-if="
                           editedItem.powerTransformer[i].voltageRating ===
                           '132/33KV'
                         "
@@ -124,9 +135,10 @@
                         outlined
                         dense
                         label="Source Station"
+                        :rules="[required]"
                       ></v-select>
                       <v-select
-                        v-show="
+                        v-if="
                           editedItem.powerTransformer[i].voltageRating ===
                           '132/33KV'
                         "
@@ -199,7 +211,7 @@
               </v-expansion-panel>
             </v-expansion-panels>
           </v-row>
-        </v-container>
+        </v-form>
       </v-card-text>
 
       <v-card-actions>
@@ -215,9 +227,11 @@
 <script>
 import { Notify } from 'notiflix'
 import { mapActions, mapGetters, mapState } from 'vuex'
+import rules from '~/mixins/rules'
 
 export default {
   name: 'StationDialog',
+  mixins: [rules],
   props: {
     dialogProp: {
       type: Boolean,
@@ -234,6 +248,7 @@ export default {
   },
   data() {
     return {
+      valid: true,
       defaultItem: {
         name: null,
         stationType: null,
@@ -244,7 +259,7 @@ export default {
             capacityKVA: null,
             voltageRating: null,
             ratedCurrent: null,
-            transformerPeakLoadMW: null,
+            transformerPeakLoadMW: 0,
             sourceStationId: null,
             sourcePowerTransformerId: null,
             feeder33kvId: null,
@@ -276,8 +291,8 @@ export default {
 
     ...mapState('power-transformer', {
       powerTransformers: 'powerTransformers',
-      station_error: 'error',
-      station_error_message: 'error_message',
+      power_transformer_error: 'error',
+      power_transformer_error_message: 'error_message',
     }),
 
     ...mapState('feeder', {

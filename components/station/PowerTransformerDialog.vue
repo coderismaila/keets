@@ -11,7 +11,7 @@
       >
         <span> Add Transformer </span>
 
-        <v-icon dark> mdi-plus </v-icon>
+        <v-icon dark>mdi-plus</v-icon>
       </v-btn>
     </template>
     <v-card class="py-4">
@@ -65,7 +65,7 @@
             >
             </v-text-field>
             <v-select
-              v-show="editedItem.voltageRating === '132/33KV'"
+              v-if="editedItem.voltageRating === '132/33KV'"
               v-model="editedItem.sourceStationId"
               :items="filteredSourceStations"
               :error="station_error"
@@ -196,8 +196,11 @@ export default {
         return this.stations.filter((station) =>
           station.name.includes('330/132')
         )
+      } else {
+        return this.stations.filter((station) =>
+          station.name.includes('132/11')
+        )
       }
-      return this.stations.filter((station) => station.name.includes('132/11'))
     },
 
     filteredSourcePowerTransformers() {

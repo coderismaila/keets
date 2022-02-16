@@ -64,35 +64,39 @@
               label="Transformer Peak Load(MW)"
             >
             </v-text-field>
-            <v-select
+            <div
               v-if="editedItem.voltageRating === '132/33KV'"
-              v-model="editedItem.sourceStationId"
-              :items="filteredSourceStations"
-              :error="station_error"
-              :error-messages="station_error_message"
-              item-text="name"
-              item-value="id"
-              hide-selected
-              outlined
-              dense
-              row
-              label="Source Station"
-            />
+              class="d-flex flex-column w-full"
+              style="width: 100%"
+            >
+              <v-select
+                v-model="editedItem.sourceStationId"
+                :items="filteredSourceStations"
+                :error="station_error"
+                :error-messages="station_error_message"
+                item-text="name"
+                item-value="id"
+                hide-selected
+                outlined
+                dense
+                row
+                label="Source Station"
+              />
 
-            <v-select
-              v-if="editedItem.voltageRating === '132/33KV'"
-              v-model="editedItem.sourcePowerTransformerId"
-              :items="filteredSourcePowerTransformers"
-              :error="power_transformer_error"
-              :error-messages="power_transformer_error_message"
-              item-text="name"
-              item-value="id"
-              hide-selected
-              outlined
-              dense
-              row
-              label="Source Power Transformer"
-            />
+              <v-select
+                v-model="editedItem.sourcePowerTransformerId"
+                :items="filteredSourcePowerTransformers"
+                :error="power_transformer_error"
+                :error-messages="power_transformer_error_message"
+                item-text="name"
+                item-value="id"
+                hide-selected
+                outlined
+                dense
+                row
+                label="Source Power Transformer"
+              />
+            </div>
 
             <v-select
               v-if="editedItem.voltageRating === '33/11KV'"
@@ -192,15 +196,7 @@ export default {
     }),
 
     filteredSourceStations() {
-      if (this.editedItem.voltageRating === '132/33KV') {
-        return this.stations.filter((station) =>
-          station.name.includes('330/132')
-        )
-      } else {
-        return this.stations.filter((station) =>
-          station.name.includes('132/11')
-        )
-      }
+      return this.stations.filter((station) => station.name.includes('330/132'))
     },
 
     filteredSourcePowerTransformers() {

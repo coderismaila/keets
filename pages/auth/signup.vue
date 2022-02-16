@@ -29,14 +29,14 @@
                   outlined
                   label="Username"
                   prepend-inner-icon="mdi-account"
-                  :rules="[required, min4]"
+                  :rules="['required', 'min4']"
                 />
                 <v-text-field
                   v-model="formData.staffId"
                   outlined
                   label="Staff ID"
                   prepend-inner-icon="mdi-numeric"
-                  :rules="[required, min4, max6]"
+                  :rules="['required', 'min4', 'max6']"
                 />
                 <v-text-field
                   v-model="formData.email"
@@ -44,7 +44,7 @@
                   outlined
                   label="Email"
                   prepend-inner-icon="mdi-email"
-                  :rules="[required, email]"
+                  :rules="['required', 'email']"
                 />
 
                 <v-text-field
@@ -54,7 +54,7 @@
                   :type="hidePassword ? 'password' : 'text'"
                   prepend-inner-icon="mdi-lock"
                   :append-icon="hidePassword ? 'mdi-eye' : 'mdi-eye-off'"
-                  :rules="[required, min8]"
+                  :rules="['required', 'min8']"
                   @click:append="() => (hidePassword = !hidePassword)"
                 />
                 <!-- <v-btn
@@ -81,14 +81,14 @@
                   outlined
                   label="First Name"
                   prepend-inner-icon="mdi-account"
-                  :rules="[required]"
+                  :rules="['required']"
                 />
                 <v-text-field
                   v-model="formData.lastName"
                   outlined
                   label="Last Name"
                   prepend-inner-icon="mdi-numeric"
-                  :rules="[required]"
+                  :rules="['required']"
                 />
                 <v-text-field
                   v-model="formData.middleName"
@@ -102,7 +102,7 @@
                 outlined
                 label="Phone Number"
                 prepend-inner-icon="mdi-phone-outline"
-                :rules="[required]"
+                :rules="['required']"
               /> -->
 
                 <!-- <date-picker
@@ -115,7 +115,7 @@
                   v-model="formData.gender"
                   row
                   label="Gender"
-                  :rules="[required]"
+                  :rules="['required']"
                 >
                   <v-radio label="Male" value="MALE"></v-radio>
                   <v-radio label="Female" value="FEMALE"></v-radio>
@@ -137,7 +137,7 @@
                   outlined
                   label="Job Description"
                   prepend-inner-icon="mdi-email"
-                  :rules="[required]"
+                  :rules="['required']"
                 />
                 <v-select
                   v-model="formData.designation"
@@ -147,7 +147,7 @@
                   item-value="value"
                   label="Designation"
                   prepend-inner-icon="mdi-email"
-                  :rules="[required]"
+                  :rules="['required']"
                 />
                 <v-select
                   v-model="formData.areaOfficeId"
@@ -157,7 +157,7 @@
                   outlined
                   label="Area Office"
                   prepend-inner-icon="mdi-email"
-                  :rules="[required]"
+                  :rules="['required']"
                 />
                 <v-select
                   v-model="formData.stationId"

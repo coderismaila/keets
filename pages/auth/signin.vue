@@ -10,7 +10,7 @@
         ></v-img>
       </nuxt-link>
       <v-card-title class="mt-3 px-0 justify-center headline">
-        Welcome Back, Sign In
+        Sign In
       </v-card-title>
       <v-alert v-if="error" type="error" dismissible dense>
         {{ error_message }}

@@ -61,10 +61,10 @@
               </v-radio-group>
             </v-col>
           </v-row>
-          <v-divider v-show="editedIndex === -1" />
+          <v-divider v-show="!editing" />
           <v-row class="pt-4">
             <v-expansion-panels
-              v-if="editedIndex === -1"
+              v-if="!editing"
               v-model="panel"
               flat
               class="elevation-0"
@@ -241,14 +241,29 @@ export default {
       type: Object,
       required: true,
     },
-    editedIndexProp: {
-      type: Number,
-      required: true,
+    editingProp: {
+      type: Boolean,
     },
   },
   data() {
     return {
       valid: true,
+      editedItem: {
+        name: null,
+        stationType: null,
+        areaOfficeName: null,
+        powerTransformer: [
+          {
+            name: null,
+            capacityKVA: null,
+            voltageRating: null,
+            ratedCurrent: null,
+            transformerPeakLoadMW: null,
+            sourcePowerTransformerId: null,
+            feeder33kvId: null,
+          },
+        ],
+      },
       defaultItem: {
         name: null,
         stationType: null,
@@ -259,7 +274,7 @@ export default {
             capacityKVA: null,
             voltageRating: null,
             ratedCurrent: null,
-            transformerPeakLoadMW: 0,
+            transformerPeakLoadMW: null,
             sourceStationId: null,
             sourcePowerTransformerId: null,
             feeder33kvId: null,
@@ -326,10 +341,10 @@ export default {
     },
 
     formTitle() {
-      return this.editedIndex === -1 ? 'New Station' : 'Edit Station'
+      return !this.editing ? 'New Station' : 'Edit Station'
     },
     buttonText() {
-      return this.editedIndex === -1 ? 'Save' : 'Update'
+      return !this.editing ? 'Save' : 'Update'
     },
     dialog: {
       get() {
@@ -339,28 +354,21 @@ export default {
         this.$emit('update:dialogProp', dialogProp)
       },
     },
-
-    editedItem: {
+    editing: {
       get() {
-        return this.editedItemProp
+        return this.editingProp
       },
-      set(editedItemProp) {
-        this.$emit('update:editedItemProp', editedItemProp)
-      },
-    },
-    editedIndex: {
-      get() {
-        return this.editedIndexProp
-      },
-      set(editedIndexProp) {
-        this.$emit('update:editedIndexProp', editedIndexProp)
+      set(editingProp) {
+        this.$emit('update:editingProp', editingProp)
       },
     },
   },
 
   watch: {
-    dialog(val) {
-      val || this.close()
+    editing(value) {
+      if (value) {
+        this.editedItem = this.editedItemProp
+      }
     },
   },
 
@@ -383,7 +391,7 @@ export default {
 
     async save() {
       this.loading = true
-      if (this.editedIndex > -1) {
+      if (this.editing) {
         await this.updateStation(this.editedItem)
       } else {
         await this.addStation(this.editedItem)
@@ -397,17 +405,19 @@ export default {
         this.close()
         Notify.success(
           `${this.editedItem.name} has been ${
-            this.editedIndex > -1 ? 'updated' : 'added'
+            this.editing ? 'updated' : 'added'
           }`
         )
       }
     },
+
     close() {
       this.dialog = false
       this.$store.commit('station/SET_ERROR')
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
+        this.editing = false
+        this.$refs.form.reset()
       })
     },
   },

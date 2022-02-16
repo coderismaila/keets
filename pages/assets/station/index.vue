@@ -5,11 +5,12 @@
       mobile-breakpoint="0"
       :headers="headers"
       :items="stationTableData"
-      :items-per-page="10"
+      :items-per-page="50"
       :loading="$fetchState.pending"
+      :editing="editing"
     >
       <template #top>
-        <v-toolbar flat>
+        <v-toolbar flat class="table-header">
           <v-toolbar-title>Station</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
 
@@ -27,9 +28,10 @@
 
           <!-- Station Dialog -->
           <station-dialog
+            ref="stationDialog"
             :dialog-prop.sync="dialog"
-            :edited-item-prop.sync="editedItem"
-            :edited-index-prop.sync="editedIndex"
+            :edited-item-prop="editedItem"
+            :editing-prop.sync="editing"
           />
           <!-- Station Dialog -->
         </v-toolbar>
@@ -40,7 +42,7 @@
           <v-btn icon nuxt :to="`/assets/station/${item.id}`">
             <v-icon small> mdi-eye-outline </v-icon></v-btn
           >
-          <v-btn icon @click="editItem({ ...item })">
+          <v-btn icon @click="editItem(item)">
             <v-icon small> mdi-pencil-outline </v-icon></v-btn
           >
           <v-btn icon @click="deleteItem(item)">
@@ -63,43 +65,11 @@ export default {
   data() {
     return {
       title: 'Station',
+      editing: false,
       search: '',
       loading: false,
       dialog: false,
-      editedIndex: -1,
-      editedItem: {
-        name: null,
-        stationType: null,
-        areaOfficeName: null,
-        powerTransformer: [
-          {
-            name: null,
-            capacityKVA: 0,
-            voltageRating: null,
-            ratedCurrent: null,
-            transformerPeakLoadMW: 0,
-            sourcePowerTransformerId: null,
-            feeder33kvId: null,
-          },
-        ],
-      },
-      defaultItem: {
-        name: null,
-        stationType: null,
-        areaOfficeName: null,
-        powerTransformer: [
-          {
-            name: null,
-            capacityKVA: null,
-            voltageRating: null,
-            ratedCurrent: null,
-            transformerPeakLoadMW: 0,
-            sourceStationId: null,
-            sourcePowerTransformerId: null,
-            feeder33kvId: null,
-          },
-        ],
-      },
+      editedItem: {},
       headers: [
         {
           text: 'Station Name',
@@ -126,27 +96,18 @@ export default {
   },
 
   computed: {
-    ...mapState('station', ['stationTableData', 'error', 'error_message']),
+    ...mapState('station', ['error', 'error_message']),
     ...mapGetters('station', ['stationTableData']),
   },
 
   watch: {
     dialog(val) {
-      val || this.close()
+      val || this.$refs.stationDialog.close()
     },
   },
 
   methods: {
     ...mapActions('station', ['deleteStation']),
-
-    close() {
-      this.dialog = false
-      this.$store.commit('station/SET_ERROR')
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      })
-    },
 
     findIndex(array, item) {
       for (let i = 0; i < array.length; i++) {
@@ -156,13 +117,12 @@ export default {
     },
 
     editItem(item) {
-      this.editedIndex = this.findIndex(this.stationTableData, item)
+      this.editing = true
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
 
     deleteItem(item) {
-      this.editedIndex = this.stationTableData.indexOf(item)
       this.editedItem = Object.assign({}, item)
 
       Confirm.show(

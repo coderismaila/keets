@@ -2,6 +2,7 @@
   <div class="mt-4">
     <v-data-table
       :headers="headers"
+      mobile-breakpoint="0"
       :items="getPowerTransformerById($route.params.id)"
       disable-filtering
       disable-pagination

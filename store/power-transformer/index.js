@@ -89,7 +89,7 @@ export const actions = {
       })
     }
   },
-  async deleteStation(context, payload) {
+  async deletePowerTransformer(context, payload) {
     try {
       context.commit('SET_ERROR')
       const powerTransformer = await this.$axios.$delete(

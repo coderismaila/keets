@@ -9,7 +9,7 @@
         v-bind="attrs"
         v-on="on"
       >
-        <span> Add Transformer </span>
+        <span v-if="$vuetify.breakpoint.mdAndUp"> Add Transformer </span>
 
         <v-icon dark>mdi-plus</v-icon>
       </v-btn>
@@ -18,102 +18,105 @@
       <v-card-title>
         <span class="text-h5">{{ formTitle }}</span>
       </v-card-title>
+      <v-card-text>
+        <v-alert
+          v-if="power_transformer_error"
+          dense
+          type="error"
+          dismissible
+          >{{ power_transformer_error_message }}</v-alert
+        >
+      </v-card-text>
       <v-card-text class="mt-4">
-        <v-container>
-          <v-alert
-            v-if="power_transformer_error"
+        <v-form ref="form" v-model="valid" lazy-validation>
+          <v-text-field
+            v-model="editedItem.name"
+            outlined
             dense
-            type="error"
-            dismissible
-            >{{ power_transformer_error_message }}</v-alert
+            label="Power Transformer Name"
+            :rules="[required]"
+          ></v-text-field>
+          <v-text-field
+            v-model.number="editedItem.capacityKVA"
+            outlined
+            dense
+            label="Capacity(KVA)"
+            :rules="[required, isNumber]"
+          ></v-text-field>
+          <v-select
+            v-model="editedItem.voltageRating"
+            :items="voltageRatings"
+            item-text="text"
+            item-value="value"
+            outlined
+            dense
+            label="Voltage Rating"
+            :rules="[required]"
+          ></v-select>
+          <v-text-field
+            v-model="editedItem.ratedCurrent"
+            outlined
+            dense
+            label="Rated Current(optional)"
           >
-          <v-row>
-            <v-text-field
-              v-model="editedItem.name"
-              outlined
-              dense
-              label="Power Transformer Name"
-            ></v-text-field>
-            <v-text-field
-              v-model.number="editedItem.capacityKVA"
-              outlined
-              dense
-              label="Capacity(KVA)"
-            ></v-text-field>
+          </v-text-field>
+          <v-text-field
+            v-model.number="editedItem.transformerPeakLoadMW"
+            type="number"
+            outlined
+            dense
+            label="Transformer Peak Load in MW(optional)"
+          >
+          </v-text-field>
+          <div
+            v-if="editedItem.voltageRating === '132/33KV'"
+            class="d-flex flex-column w-full"
+            style="width: 100%"
+          >
             <v-select
-              v-model="editedItem.voltageRating"
-              :items="voltageRatings"
-              item-text="text"
-              item-value="value"
-              outlined
-              dense
-              label="Voltage Rating"
-            ></v-select>
-            <v-text-field
-              v-model="editedItem.ratedCurrent"
-              outlined
-              dense
-              label="Rated Current"
-            >
-            </v-text-field>
-            <v-text-field
-              v-model.number="editedItem.transformerPeakLoadMW"
-              type="number"
-              outlined
-              dense
-              label="Transformer Peak Load(MW)"
-            >
-            </v-text-field>
-            <div
-              v-if="editedItem.voltageRating === '132/33KV'"
-              class="d-flex flex-column w-full"
-              style="width: 100%"
-            >
-              <v-select
-                v-model="editedItem.sourceStationId"
-                :items="filteredSourceStations"
-                :error="station_error"
-                :error-messages="station_error_message"
-                item-text="name"
-                item-value="id"
-                hide-selected
-                outlined
-                dense
-                row
-                label="Source Station"
-              />
-
-              <v-select
-                v-model="editedItem.sourcePowerTransformerId"
-                :items="filteredSourcePowerTransformers"
-                :error="power_transformer_error"
-                :error-messages="power_transformer_error_message"
-                item-text="name"
-                item-value="id"
-                hide-selected
-                outlined
-                dense
-                row
-                label="Source Power Transformer"
-              />
-            </div>
-
-            <v-select
-              v-if="editedItem.voltageRating === '33/11KV'"
-              v-model="editedItem.feeder33kvId"
-              :items="feeders"
-              :error="feeder_error"
-              :error-messages="feeder_error_message"
+              v-model="editedItem.sourceStationId"
+              :items="filteredSourceStations"
+              :error="station_error"
+              :error-messages="station_error_message"
               item-text="name"
               item-value="id"
               hide-selected
               outlined
               dense
               row
-              label="33KV Feeder"
+              label="Source Station"
             />
-          </v-row>
-        </v-container>
+
+            <v-select
+              v-model="editedItem.sourcePowerTransformerId"
+              :items="filteredSourcePowerTransformers"
+              :error="power_transformer_error"
+              :error-messages="power_transformer_error_message"
+              item-text="name"
+              item-value="id"
+              hide-selected
+              outlined
+              dense
+              row
+              label="Source Power Transformer"
+            />
+          </div>
+
+          <v-select
+            v-if="editedItem.voltageRating === '33/11KV'"
+            v-model="editedItem.feeder33kvId"
+            :items="feeders"
+            :error="feeder_error"
+            :error-messages="feeder_error_message"
+            item-text="name"
+            item-value="id"
+            hide-selected
+            outlined
+            dense
+            row
+            label="33KV Feeder"
+          />
+        </v-form>
       </v-card-text>
 
       <v-card-actions>
@@ -129,9 +132,11 @@
 <script>
 import { Notify } from 'notiflix'
 import { mapActions, mapState } from 'vuex'
+import rules from '~/mixins/rules'
 
 export default {
   name: 'PowerTransformerDialog',
+  mixins: [rules],
   props: {
     dialogProp: {
       type: Boolean,
@@ -141,27 +146,40 @@ export default {
       type: Object,
       required: true,
     },
-    editedIndexProp: {
-      type: Number,
-      required: true,
+    editingProp: {
+      type: Boolean,
     },
   },
 
   data() {
     return {
-      defaultItem: {
+      editedItem: {
         name: null,
-        capacity: '',
-        voltageRating: '',
+        capacity: null,
+        voltageRating: null,
         routeLength: null,
-        ratedCurrent: '',
+        ratedCurrent: null,
         transformerPeakLoadMW: null,
         sourceStationId: null,
         sourcePowerTransformerId: null,
         feeder33kvId: null,
         stationId: this.$route.params.id,
-        areaOfficeId: '',
+        areaOfficeId: null,
       },
+      defaultItem: {
+        name: null,
+        capacity: null,
+        voltageRating: null,
+        routeLength: null,
+        ratedCurrent: null,
+        transformerPeakLoadMW: null,
+        sourceStationId: null,
+        sourcePowerTransformerId: null,
+        feeder33kvId: null,
+        stationId: this.$route.params.id,
+        areaOfficeId: null,
+      },
+      valid: true,
       loading: false,
       panel: [0],
       voltageRatings: [
@@ -207,13 +225,11 @@ export default {
     },
 
     formTitle() {
-      return this.editedIndex === -1
-        ? 'New Power Transformer'
-        : 'Edit Power Transformer'
+      return !this.editing ? 'New Power Transformer' : 'Edit Power Transformer'
     },
 
     buttonText() {
-      return this.editedIndex === -1 ? 'Save' : 'Update'
+      return !this.editing ? 'Save' : 'Update'
     },
 
     dialog: {
@@ -225,27 +241,21 @@ export default {
       },
     },
 
-    editedItem: {
+    editing: {
       get() {
-        return this.editedItemProp
+        return this.editingProp
       },
-      set(editedItemProp) {
-        this.$emit('update:editedItemProp', editedItemProp)
-      },
-    },
-    editedIndex: {
-      get() {
-        return this.editedIndexProp
-      },
-      set(editedIndexProp) {
-        this.$emit('update:editedIndexProp', editedIndexProp)
+      set(editingProp) {
+        this.$emit('update:editingProp', editingProp)
       },
     },
   },
 
   watch: {
-    dialog(val) {
-      val || this.close()
+    editing(value) {
+      if (value) {
+        this.editedItem = this.editedItemProp
+      }
     },
   },
 
@@ -258,7 +268,7 @@ export default {
 
     async save() {
       this.loading = true
-      if (this.editedIndex > -1) {
+      if (this.editing) {
         await this.updatePowerTransformer(this.editedItem)
       } else {
         await this.addPowerTransformer(this.editedItem)
@@ -273,17 +283,19 @@ export default {
         this.close()
         Notify.success(
           `${this.editedItem.name} has been ${
-            this.editedIndex > -1 ? 'updated' : 'added'
+            this.editing ? 'updated' : 'added'
           }`
         )
       }
     },
+
     close() {
       this.dialog = false
       this.$store.commit('station/SET_ERROR')
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
+        this.editing = false
+        this.$refs.form.reset()
       })
     },
   },

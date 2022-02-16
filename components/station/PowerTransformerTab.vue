@@ -9,16 +9,17 @@
       hide-default-footer
     >
       <template #top>
-        <v-toolbar flat>
+        <v-toolbar flat class="table-header">
           <v-toolbar-title>Power Transformers</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
 
           <v-spacer></v-spacer>
           <!-- Station Dialog -->
           <power-transformer-dialog
+            ref="transformerDialog"
             :dialog-prop.sync="dialog"
-            :edited-item-prop.sync="editedItem"
-            :edited-index-prop.sync="editedIndex"
+            :edited-item-prop="editedItem"
+            :editing-prop.sync="editing"
           />
           <!-- Station Dialog -->
         </v-toolbar>
@@ -26,7 +27,7 @@
 
       <template #[`item.actions`]="{ item }">
         <div class="d-flex">
-          <v-btn icon @click="editItem({ ...item })">
+          <v-btn icon @click="editItem(item)">
             <v-icon small> mdi-pencil-outline </v-icon></v-btn
           >
           <v-btn icon @click="deleteItem(item)">
@@ -39,8 +40,7 @@
 </template>
 <script>
 import { Confirm, Notify, Report } from 'notiflix'
-import { isEqual } from 'lodash'
-import { mapGetters, mapState } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 import PowerTransformerDialog from '~/components/station/PowerTransformerDialog.vue'
 
 export default {
@@ -84,30 +84,8 @@ export default {
         },
       ],
       dialog: false,
-      editedIndex: -1,
-      editedItem: {
-        name: null,
-        capacityKVA: null,
-        voltageRating: null,
-        ratedCurrent: null,
-        transformerPeakLoadMW: null,
-        sourceStationId: null,
-        sourcePowerTransformerId: null,
-        feeder33kvId: null,
-        stationId: this.$route.params.id,
-      },
-      defaultItem: {
-        name: '',
-        capacity: '',
-        voltageRating: '',
-        routeLength: 0,
-        ratedCurrent: '',
-        transformerPeakLoadMW: 0,
-        sourceStationId: null,
-        sourcePowerTransformerId: null,
-        feeder33kvId: null,
-        stationId: '',
-      },
+      editing: false,
+      editedItem: {},
     }
   },
   async fetch() {
@@ -136,27 +114,22 @@ export default {
     ...mapGetters('power-transformer', ['getPowerTransformerById']),
   },
 
-  methods: {
-    findIndex(array, item) {
-      for (let i = 0; i < array.length; i++) {
-        if (isEqual(array[i], item)) return i
-      }
-      return -1
+  watch: {
+    dialog(val) {
+      val || this.$refs.transformerDialog.close()
     },
+  },
+
+  methods: {
+    ...mapActions('power-transformer', ['deletePowerTransformer']),
 
     editItem(item) {
-      this.editedIndex = this.findIndex(
-        this.getPowerTransformerById(this.$route.params.id),
-        item
-      )
+      this.editing = true
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
 
     deleteItem(item) {
-      this.editedIndex = this.getPowerTransformerById(
-        this.$route.params.id
-      ).indexOf(item)
       this.editedItem = Object.assign({}, item)
 
       Confirm.show(
@@ -166,7 +139,7 @@ export default {
         'No',
         async () => {
           try {
-            await this.deleteStation(this.editedItem)
+            await this.deletePowerTransformer(this.editedItem)
             if (this.error) {
               Notify.failure(
                 `Error deleting station. \n ${this.error_message}`,

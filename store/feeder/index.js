@@ -41,6 +41,10 @@ export const getters = {
       (feeder) => feeder.stationId === rootState.auth.user.stationId
     )
   },
+
+  getFeedersByStationId: (state) => (id) => {
+    return state.feeders.filter((feeder) => feeder.stationId === id)
+  },
 }
 
 // action
@@ -90,7 +94,7 @@ export const actions = {
     try {
       context.commit('SET_ERROR')
       const feeder = await this.$axios.$delete(`/feeder/${payload.id}`)
-      context.commit('REMOVE_STATION', feeder)
+      context.commit('REMOVE_FEEDER', feeder)
     } catch ({ response }) {
       // eslint-disable-next-line no-console
       console.log('response error', response.data)

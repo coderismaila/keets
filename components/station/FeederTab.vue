@@ -3,13 +3,13 @@
     <v-data-table
       :headers="headers"
       mobile-breakpoint="0"
-      :items="getStationFeeders($route.params.id)"
+      :items="getFeedersByStationId($route.params.id)"
       disable-filtering
       disable-pagination
       hide-default-footer
     >
       <template #top>
-        <v-toolbar flat>
+        <v-toolbar flat class="table-header">
           <v-toolbar-title>Feeders</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
 
@@ -17,8 +17,8 @@
           <!-- Station Dialog -->
           <feeder-dialog
             :dialog-prop.sync="dialog"
-            :edited-item-prop.sync="editedItem"
-            :edited-index-prop.sync="editedIndex"
+            :edited-item-prop="editedItem"
+            :editing-prop.sync="editing"
           />
 
           <!-- Station Dialog -->
@@ -27,7 +27,7 @@
 
       <template #[`item.actions`]="{ item }">
         <div class="d-flex">
-          <v-btn icon @click="editItem({ ...item })">
+          <v-btn icon @click="editItem(item)">
             <v-icon small> mdi-pencil-outline </v-icon></v-btn
           >
           <v-btn icon @click="deleteItem(item)">
@@ -40,8 +40,7 @@
 </template>
 <script>
 import { Confirm, Notify, Report } from 'notiflix'
-import { isEqual } from 'lodash'
-import { mapGetters, mapState } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 import FeederDialog from '../feeder/FeederDialog.vue'
 
 export default {
@@ -64,7 +63,7 @@ export default {
         { text: 'Actions', value: 'actions', sortable: false, width: '100px' },
       ],
       dialog: false,
-      editedIndex: -1,
+      editing: false,
       editedItem: {
         name: null,
         capacityKVA: null,
@@ -90,55 +89,33 @@ export default {
       },
     }
   },
+
   async fetch() {
-    await this.$store.dispatch('station/getAllStations')
+    Promise.all([
+      await this.$store.dispatch('station/getAllStations'),
+      await this.$store.dispatch('station/getAllFeeders'),
+    ])
   },
 
   computed: {
-    ...mapState('power-transformer', {
-      powerTransformers: 'powerTransformers',
-      power_transformer_error: 'error',
-      power_transformer_error_message: 'error_message',
-    }),
-
     ...mapState('feeder', {
-      feeders: 'feeders',
       feeder_error: 'error',
       feeder_error_message: 'error_message',
     }),
 
-    ...mapState('station', {
-      stations: 'stations',
-      station_error: 'error',
-      station_error_message: 'error_message',
-    }),
-
-    ...mapGetters('power-transformer', ['getPowerTransformerById']),
-
-    ...mapGetters('station', ['getStationFeeders']),
+    ...mapGetters('feeder', ['getFeedersByStationId']),
   },
 
   methods: {
-    findIndex(array, item) {
-      for (let i = 0; i < array.length; i++) {
-        if (isEqual(array[i], item)) return i
-      }
-      return -1
-    },
+    ...mapActions('feeder', ['deleteFeeder']),
 
     editItem(item) {
-      this.editedIndex = this.findIndex(
-        this.getPowerTransformerById(this.$route.params.id),
-        item
-      )
+      this.editing = true
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
 
     deleteItem(item) {
-      this.editedIndex = this.getPowerTransformerById(
-        this.$route.params.id
-      ).indexOf(item)
       this.editedItem = Object.assign({}, item)
 
       Confirm.show(
@@ -148,16 +125,13 @@ export default {
         'No',
         async () => {
           try {
-            await this.deleteStation(this.editedItem)
-            if (this.error) {
-              Notify.failure(
-                `Error deleting station. \n ${this.error_message}`,
-                () => {
-                  this.$store.commit('station/SET_ERROR')
-                }
-              )
+            await this.deleteFeeder(this.editedItem)
+            if (this.feeder_error) {
+              Notify.failure(`Error: ${this.feeder_error_message}`, () => {
+                this.$store.commit('feeder/SET_ERROR')
+              })
             } else {
-              Notify.success('Station deleted successfully')
+              Notify.success('Feeder deleted successfully')
             }
           } catch ({ response }) {
             Report.failure('Error', response.data.message, 'OK')

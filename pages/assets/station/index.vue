@@ -55,7 +55,6 @@
 </template>
 <script>
 import { Confirm, Notify, Report } from 'notiflix'
-import { isEqual } from 'lodash'
 import { mapActions, mapGetters, mapState } from 'vuex'
 import rules from '~/mixins/rules'
 
@@ -109,13 +108,6 @@ export default {
   methods: {
     ...mapActions('station', ['deleteStation']),
 
-    findIndex(array, item) {
-      for (let i = 0; i < array.length; i++) {
-        if (isEqual(array[i], item)) return i
-      }
-      return -1
-    },
-
     editItem(item) {
       this.editing = true
       this.editedItem = Object.assign({}, item)
@@ -134,12 +126,9 @@ export default {
           try {
             await this.deleteStation(this.editedItem)
             if (this.error) {
-              Notify.failure(
-                `Error deleting station. \n ${this.error_message}`,
-                () => {
-                  this.$store.commit('station/SET_ERROR')
-                }
-              )
+              Notify.failure(`Error: ${this.error_message}`, () => {
+                this.$store.commit('station/SET_ERROR')
+              })
             } else {
               Notify.success('Station deleted successfully')
             }

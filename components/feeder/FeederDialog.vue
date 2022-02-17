@@ -19,17 +19,20 @@
         <span class="text-h5">{{ formTitle }}</span>
       </v-card-title>
       <v-card-text>
-        <v-container>
+        <v-card-text>
           <v-alert v-if="feeder_error" dense type="error" dismissible>{{
             feeder_error_message
           }}</v-alert>
-          <v-row>
+        </v-card-text>
+        <v-card-text>
+          <v-form ref="form" v-model="valid" lazy-validation>
             <v-col cols="12" class="pb-0">
               <v-text-field
                 v-model="editedItem.name"
                 outlined
                 dense
                 label="Feeder Name"
+                :rules="[required]"
               ></v-text-field>
             </v-col>
             <v-col cols="12" class="pb-0">
@@ -54,6 +57,7 @@
                 v-model="editedItem.voltageLevel"
                 row
                 label="Voltage Level"
+                :rules="[required]"
               >
                 <v-radio value="KV11" label="11KV" />
                 <v-radio value="KV33" label="33KV" />
@@ -72,6 +76,7 @@
                 dense
                 row
                 label="Area Office"
+                :rules="[required]"
               />
             </v-col>
 
@@ -88,6 +93,7 @@
                 dense
                 row
                 label="Station"
+                :rules="[required]"
               />
             </v-col>
             <v-col cols="12" class="pb-0">
@@ -103,6 +109,7 @@
                 dense
                 row
                 label="Power Transformer"
+                :rules="[required]"
               />
             </v-col>
             <v-col cols="12" class="pb-0">
@@ -115,8 +122,8 @@
               ></v-text-field>
             </v-col>
             <v-col cols="12" class="py-0"> </v-col>
-          </v-row>
-        </v-container>
+          </v-form>
+        </v-card-text>
       </v-card-text>
 
       <v-card-actions>
@@ -132,9 +139,11 @@
 <script>
 import { Notify } from 'notiflix'
 import { mapActions, mapState } from 'vuex'
+import rules from '~/mixins/rules'
 
 export default {
   name: 'FeederDialog',
+  mixins: [rules],
   props: {
     dialogProp: {
       type: Boolean,
@@ -144,24 +153,36 @@ export default {
       type: Object,
       required: true,
     },
-    editedIndexProp: {
-      type: Number,
+    editingProp: {
+      type: Boolean,
       required: true,
     },
   },
   data() {
     return {
-      defaultItem: {
-        name: '',
-        voltageLevel: '',
+      editedItem: {
+        name: null,
+        voltageLevel: null,
         routeLength: 0,
-        kaedcoCode: '',
-        nercCode: '',
-        areaOfficeName: '',
-        powerTransformerId: '',
-        stationId: '',
-        areaOfficeId: '',
+        kaedcoCode: null,
+        nercCode: null,
+        areaOfficeName: null,
+        powerTransformerId: null,
+        stationId: null,
+        areaOfficeId: null,
       },
+      defaultItem: {
+        name: null,
+        voltageLevel: null,
+        routeLength: 0,
+        kaedcoCode: null,
+        nercCode: null,
+        areaOfficeName: null,
+        powerTransformerId: null,
+        stationId: null,
+        areaOfficeId: null,
+      },
+      valid: true,
       loading: false,
       panel: [0],
     }
@@ -224,10 +245,10 @@ export default {
     },
 
     formTitle() {
-      return this.editedIndex === -1 ? 'New Feeder' : 'Edit Feeder'
+      return !this.editing ? 'New Feeder' : 'Edit Feeder'
     },
     buttonText() {
-      return this.editedIndex === -1 ? 'Save' : 'Update'
+      return !this.editing ? 'Save' : 'Update'
     },
     dialog: {
       get() {
@@ -238,36 +259,30 @@ export default {
       },
     },
 
-    editedItem: {
+    editing: {
       get() {
-        return this.editedItemProp
+        return this.editingProp
       },
-      set(editedItemProp) {
-        this.$emit('update:editedItemProp', editedItemProp)
-      },
-    },
-    editedIndex: {
-      get() {
-        return this.editedIndexProp
-      },
-      set(editedIndexProp) {
-        this.$emit('update:editedIndexProp', editedIndexProp)
+      set(editingProp) {
+        this.$emit('update:editingProp', editingProp)
       },
     },
   },
 
   watch: {
-    dialog(val) {
-      val || this.close()
+    editing(value) {
+      if (value) {
+        this.editedItem = this.editedItemProp
+      }
     },
   },
 
   methods: {
-    ...mapActions('feeder', ['addFeeder', 'updateFeeder', 'deleteFeeder']),
+    ...mapActions('feeder', ['addFeeder', 'updateFeeder']),
 
     async save() {
       this.loading = true
-      if (this.editedIndex > -1) {
+      if (this.editing) {
         await this.updateFeeder(this.editedItem)
       } else {
         await this.addFeeder(this.editedItem)
@@ -281,7 +296,7 @@ export default {
         this.close()
         Notify.success(
           `${this.editedItem.name} has been ${
-            this.editedIndex > -1 ? 'updated' : 'added'
+            this.editing ? 'updated' : 'added'
           }`
         )
       }
@@ -291,7 +306,8 @@ export default {
       this.$store.commit('station/SET_ERROR')
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
+        this.editing = false
+        this.$refs.form.reset()
       })
     },
   },

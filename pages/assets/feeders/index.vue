@@ -27,9 +27,10 @@
 
           <!-- Station Dialog -->
           <feeder-dialog
+            ref="feederDialog"
             :dialog-prop.sync="dialog"
-            :edited-item-prop.sync="editedItem"
-            :edited-index-prop.sync="editedIndex"
+            :edited-item-prop="editedItem"
+            :editing-prop.sync="editing"
           />
           <!-- Station Dialog -->
         </v-toolbar>
@@ -49,7 +50,6 @@
   </v-container>
 </template>
 <script>
-import { isEqual } from 'lodash'
 import { mapState } from 'vuex'
 import { Confirm, Notify, Report } from 'notiflix'
 
@@ -59,7 +59,7 @@ export default {
     return {
       search: '',
       dialog: false,
-      editedIndex: -1,
+      editing: false,
       headers: [
         {
           text: 'Feeder Name',
@@ -74,7 +74,8 @@ export default {
         { text: 'Area Office', value: 'areaOffice.name', width: '120px' },
         { text: 'Actions', value: 'actions', sortable: false, width: '100px' },
       ],
-      editedItem: {
+      editedItem: {},
+      defaultItem: {
         name: '',
         voltageLevel: '',
         routeLength: 0,
@@ -92,25 +93,23 @@ export default {
   },
 
   computed: {
-    ...mapState('feeder', ['feeders']),
+    ...mapState('feeder', ['feeders', 'error', 'error_message']),
+  },
+
+  watch: {
+    dialog(value) {
+      value || this.$refs.feederDialog.close()
+    },
   },
 
   methods: {
     editItem(item) {
-      this.editedIndex = this.findIndex(this.feeders, item)
+      this.editing = true
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
 
-    findIndex(array, item) {
-      for (let i = 0; i < array.length; i++) {
-        if (isEqual(array[i], item)) return i
-      }
-      return -1
-    },
-
     deleteItem(item) {
-      this.editedIndex = this.feeders.indexOf(item)
       this.editedItem = Object.assign({}, item)
 
       Confirm.show(
@@ -122,12 +121,9 @@ export default {
           try {
             await this.deleteStation(this.editedItem)
             if (this.error) {
-              Notify.failure(
-                `Error deleting feeder. \n ${this.error_message}`,
-                () => {
-                  this.$store.commit('feeder/SET_ERROR')
-                }
-              )
+              Notify.failure(`Error: ${this.error_message}`, () => {
+                this.$store.commit('feeder/SET_ERROR')
+              })
             } else {
               Notify.success('Feeder deleted successfully')
             }

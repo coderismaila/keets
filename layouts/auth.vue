@@ -1,5 +1,5 @@
 <template>
-  <v-app style="background-color: green">
+  <v-app>
     <nuxt />
   </v-app>
 </template>
@@ -8,3 +8,8 @@ export default {
   name: 'AuthLayout',
 }
 </script>
+<style scoped>
+.theme--light.v-application {
+  background-color: green !important;
+}
+</style>

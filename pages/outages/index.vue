@@ -25,6 +25,28 @@
           <!-- User Dialog -->
           <add-outage />
         </v-toolbar>
+        <v-row class="my-6">
+          <v-col cols="12" md="3" sm="6">
+            <simple-stats-card :title="3" outage-type="Today" color="red" />
+          </v-col>
+          <v-col cols="12" md="3" sm="6">
+            <simple-stats-card :title="8" outage-type="This Week" color="red" />
+          </v-col>
+          <v-col cols="12" md="3" sm="6">
+            <simple-stats-card
+              :title="23"
+              outage-type="This Month"
+              color="red"
+            />
+          </v-col>
+          <v-col cols="12" md="3" sm="6">
+            <simple-stats-card
+              :title="149"
+              outage-type="This Year"
+              color="red"
+            />
+          </v-col>
+        </v-row>
       </template>
       <template #[`item.timeOut`]="{ item }">
         {{ item.timeOut | formatTime }}
@@ -92,13 +114,19 @@
 </template>
 <script>
 import { mapActions, mapGetters, mapState } from 'vuex'
+import SimpleStatsCard from '~/components/cards/SimpleStatsCard.vue'
 import AddOutage from '~/components/outage/AddOutageDialog.vue'
 import AddTag from '~/components/outage/AddTagDialog.vue'
 import SurrenderTag from '~/components/outage/SurrenderTagDialog.vue'
 
 export default {
   name: 'OutagePage',
-  components: { AddOutage, AddTag, SurrenderTag },
+  components: {
+    AddOutage,
+    AddTag,
+    SurrenderTag,
+    SimpleStatsCard,
+  },
 
   data() {
     return {
@@ -152,6 +180,13 @@ export default {
     ...mapState('feeder', ['feeders']),
 
     ...mapGetters('outage', ['getAllUserStationOutages']),
+
+    filteredOutages() {
+      // get all station outage if user is a DSO belonging to a station
+      // get all station outage if user is a moderator (team lead, or technical manager) belonging to an area office as the station
+      // get all outage if user is admin
+      return null
+    },
   },
 
   methods: {

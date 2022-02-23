@@ -5,6 +5,8 @@
       :items="getAllUserStationOutages"
       :items-per-page="50"
       :loading="$fetchState.pending"
+      height="80vh"
+      fixed-header
       mobile-breakpoint="0"
     >
       <template #top>
@@ -12,6 +14,39 @@
           <v-toolbar-title>Outage</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
+          <!--
+          <v-select
+            v-model="selectedAreaOffice"
+            :items="areaOffices"
+            item-text="name"
+            item-value="id"
+            label="Area Office"
+            dense
+            hide-details
+            single-line
+            outlined
+            class="mr-4"
+          />
+          <date-picker
+            :date-prop.sync="selectedStartDate"
+            :disabled-prop="false"
+            :text-field-props="{
+              dense: true,
+              'single-line': true,
+              'hide-details': true,
+            }"
+            class-props="mr-4 max-w-sm pl-0"
+          />
+          <date-picker
+            :date-prop.sync="selectedEndDate"
+            :disabled-prop="false"
+            :text-field-props="{
+              dense: true,
+              'single-line': true,
+              'hide-details': true,
+            }"
+            class-props="max-w-sm pl-0"
+          /> -->
           <v-text-field
             v-model="search"
             dense
@@ -139,6 +174,9 @@ export default {
   data() {
     return {
       search: '',
+      selectedAreaOffice: '',
+      selectedStartDate: '',
+      selectedEndDate: '',
       dialog: false,
       headers: [
         { text: 'Actions', value: 'actions', sortable: false, align: 'center' },

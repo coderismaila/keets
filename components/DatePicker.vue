@@ -16,6 +16,7 @@
         prepend-inner-icon="mdi-calendar"
         readonly
         v-bind="textFieldProps"
+        :class="classProps"
         v-on="on"
       ></v-text-field>
     </template>
@@ -41,6 +42,10 @@ export default {
     // eslint-disable-next-line vue/require-default-prop
     textFieldProps: {
       type: Object,
+    },
+    classProps: {
+      type: String,
+      default: '',
     },
   },
 

@@ -130,7 +130,7 @@
             </v-col>
 
             <v-col cols="12" class="py-0">
-              <v-combobox
+              <v-select
                 v-model="editedItem.stationId"
                 :items="$store.state.station.stations"
                 item-text="name"
@@ -138,7 +138,7 @@
                 outlined
                 dense
                 label="Station*"
-              ></v-combobox>
+              ></v-select>
             </v-col>
 
             <v-col cols="12" class="pb-0">

@@ -27,21 +27,29 @@
         </v-toolbar>
         <v-row class="my-6">
           <v-col cols="12" md="3" sm="6">
-            <simple-stats-card :title="3" outage-type="Today" color="red" />
-          </v-col>
-          <v-col cols="12" md="3" sm="6">
-            <simple-stats-card :title="8" outage-type="This Week" color="red" />
+            <simple-stats-card
+              :title="dailyOutages"
+              outage-type="Today"
+              color="red"
+            />
           </v-col>
           <v-col cols="12" md="3" sm="6">
             <simple-stats-card
-              :title="23"
+              :title="weeklyOutages"
+              outage-type="This Week"
+              color="red"
+            />
+          </v-col>
+          <v-col cols="12" md="3" sm="6">
+            <simple-stats-card
+              :title="monthlyOutages"
               outage-type="This Month"
               color="red"
             />
           </v-col>
           <v-col cols="12" md="3" sm="6">
             <simple-stats-card
-              :title="149"
+              :title="yearlyOutages"
               outage-type="This Year"
               color="red"
             />
@@ -179,7 +187,13 @@ export default {
     ...mapState('outage', ['outages', 'stationOutages']),
     ...mapState('feeder', ['feeders']),
 
-    ...mapGetters('outage', ['getAllUserStationOutages']),
+    ...mapGetters('outage', [
+      'getAllUserStationOutages',
+      'dailyOutages',
+      'weeklyOutages',
+      'monthlyOutages',
+      'yearlyOutages',
+    ]),
 
     filteredOutages() {
       // get all station outage if user is a DSO belonging to a station

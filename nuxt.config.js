@@ -53,7 +53,7 @@ export default {
   dayjs: {
     locales: ['en'],
     defaultLocale: 'en',
-    plugins: ['relativeTime', 'advancedFormat'],
+    plugins: ['relativeTime', 'advancedFormat', 'weekOfYear'],
   },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios

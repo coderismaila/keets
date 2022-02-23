@@ -1,3 +1,5 @@
+import dayjs from 'dayjs'
+
 // state
 export const state = () => ({
   outages: [],
@@ -33,10 +35,61 @@ export const getters = {
     return state.outages.find((outage) => outage.id === id)
   },
 
-  getAllUserStationOutages: (state, getters, rootState) => {
+  getAllUserStationOutages(state, getters, rootState) {
+    if (state.outages.length === 0) return []
+    if (rootState.auth.user.areaOffice.name === 'head office')
+      return state.outages
     return state.outages.filter(
       (outage) => outage.feeder.stationId === rootState.auth.user.stationId
     )
+  },
+
+  dailyOutages(state, getters, rootState) {
+    const result = []
+    for (const outage of getters.getAllUserStationOutages) {
+      if (
+        dayjs(outage.timeOut).date() === dayjs().date() &&
+        dayjs(outage.timeOut).year() === dayjs().year()
+      ) {
+        result.push(outage)
+      }
+    }
+    return result.length
+  },
+  weeklyOutages(state, getters, rootState) {
+    const result = []
+    for (const outage of getters.getAllUserStationOutages) {
+      if (
+        dayjs(outage.timeOut).week() === dayjs().week() &&
+        dayjs(outage.timeOut).year() === dayjs().year()
+      ) {
+        result.push(outage)
+      }
+    }
+    return result.length
+  },
+
+  monthlyOutages(state, getters) {
+    const result = []
+    for (const outage of getters.getAllUserStationOutages) {
+      if (
+        dayjs(outage.timeOut).month() === dayjs().month() &&
+        dayjs(outage.timeOut).year() === dayjs().year()
+      ) {
+        result.push(outage)
+      }
+    }
+    return result.length
+  },
+
+  yearlyOutages(state, getters) {
+    const result = []
+    for (const outage of getters.getAllUserStationOutages) {
+      if (dayjs(outage.timeOut).year() === dayjs().year()) {
+        result.push(outage)
+      }
+    }
+    return result.length
   },
 }
 
